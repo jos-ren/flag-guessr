@@ -15,7 +15,7 @@ export default function GameModeCard({ mode, onPlay }: Props) {
     >
       <div className={styles.flagWrap}>
         <img
-          src={`https://flagcdn.com/w640/${mode.flagCode}.png`}
+          src={mode.flagImageUrl ?? `https://flagcdn.com/w640/${mode.flagCode}.png`}
           alt={`${mode.title} preview`}
           className={styles.flag}
           draggable={false}

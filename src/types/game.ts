@@ -5,7 +5,7 @@ export interface ResultMessage {
   sub: string;
 }
 
-export type Phase = 'active' | 'answered' | 'leaving' | 'gameover';
+export type Phase = 'idle' | 'active' | 'answered' | 'leaving' | 'gameover';
 
 export interface GuessRecord {
   country: Country;
@@ -18,13 +18,11 @@ export interface StatEntry {
   correct: boolean;
 }
 
-export type Difficulty = 'easy' | 'normal' | 'hard';
-export type RegionFilter = 'all' | 'africa' | 'americas' | 'asia' | 'europe' | 'middle-east' | 'oceania';
-
 export interface GameMode {
   id: string;
   title: string;
   description: string;
   flagCode: string;
+  flagImageUrl?: string;
   available: boolean;
 }

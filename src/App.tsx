@@ -1,98 +1,82 @@
-import { useState, useEffect } from 'react';
-import type { Difficulty, RegionFilter } from '@/types';
-import { useGame } from '@/hooks/useGame';
-import HomeScreen from '@/pages/HomeScreen';
-import GameScreen from '@/pages/GameScreen';
-import GameOverScreen from '@/pages/GameOverScreen';
-import StatsScreen from '@/pages/StatsScreen';
-import SettingsPanel from '@/components/SettingsPanel';
+import { useEffect, useRef, useState } from 'react';
+import { Outlet, useNavigate, useRouterState } from '@tanstack/react-router';
+import { useGameContext } from '@/context';
+import Footer from '@/components/Footer';
 import { setFlagFavicon, setRandomFlagFavicon } from '@/utils';
+import { GAME_MODES } from '@/constants';
 import styles from './App.module.css';
 
-export default function App() {
-  const [screen, setScreen] = useState<'home' | 'playing' | 'stats'>('home');
-  const [difficulty, setDifficulty] = useState<Difficulty>('normal');
-  const [regionFilter, setRegionFilter] = useState<RegionFilter>('all');
-  const [settingsOpen, setSettingsOpen] = useState(false);
+const AVAILABLE_MODES = GAME_MODES.filter(m => m.available);
 
-  const game = useGame(difficulty, regionFilter);
+export default function RootLayout() {
+  const navigate = useNavigate();
+  const pathname = useRouterState({ select: (s) => s.location.pathname });
+  const { game } = useGameContext();
+  const [dropdownOpen, setDropdownOpen] = useState(false);
+  const dropdownRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    if (screen === 'home') {
+    if (pathname === '/') {
       setRandomFlagFavicon();
-    } else if (game.isGameOver && game.stumpedBy) {
+    } else if (game.stumpedBy) {
       setFlagFavicon(game.stumpedBy.code);
     } else if (game.current) {
       setFlagFavicon(game.current.code);
     }
-  }, [screen, game.isGameOver, game.stumpedBy, game.current]);
+  }, [pathname, game.stumpedBy, game.current]);
 
-  function handlePlay() {
-    game.startGame();
-    setScreen('playing');
-  }
-
-  function handleHome() {
-    setScreen('home');
-  }
-
-  function handleStats() {
-    setScreen('stats');
-  }
+  useEffect(() => {
+    function handlePointerDown(e: PointerEvent) {
+      if (dropdownRef.current && !dropdownRef.current.contains(e.target as Node)) {
+        setDropdownOpen(false);
+      }
+    }
+    document.addEventListener('pointerdown', handlePointerDown);
+    return () => document.removeEventListener('pointerdown', handlePointerDown);
+  }, []);
 
   return (
     <div className={styles.root}>
       <nav className={styles.topBar}>
-        <button className={styles.logoButton} onClick={handleHome}>Flag Guessr</button>
+        <button
+          className={styles.logoButton}
+          onClick={() => void navigate({ to: '/' })}
+        >
+          Flag Guessr
+        </button>
+
+        <div className={styles.statsWrap} ref={dropdownRef}>
+          <button
+            className={`${styles.statsButton}${dropdownOpen ? ` ${styles.statsButtonActive}` : ''}`}
+            onClick={() => setDropdownOpen(o => !o)}
+          >
+            Stats
+          </button>
+
+          {dropdownOpen && (
+            <div className={styles.dropdown}>
+              {AVAILABLE_MODES.map(mode => (
+                <button
+                  key={mode.id}
+                  className={styles.dropdownItem}
+                  onClick={() => {
+                    setDropdownOpen(false);
+                    void navigate({ to: '/stats/$modeId', params: { modeId: mode.id } });
+                  }}
+                >
+                  {mode.title}
+                </button>
+              ))}
+            </div>
+          )}
+        </div>
       </nav>
+
       <main className={styles.main}>
-      {screen === 'home' ? (
-        <HomeScreen onPlay={handlePlay} />
-      ) : screen === 'stats' ? (
-        <StatsScreen />
-      ) : game.isGameOver ? (
-        <GameOverScreen
-          finalStreak={game.finalStreak}
-          highScore={game.highScore}
-          isNewHigh={game.isNewHigh}
-          stumpedBy={game.stumpedBy}
-          guessHistory={game.guessHistory}
-          onPlayAgain={game.startGame}
-          onStats={handleStats}
-        />
-      ) : game.current ? (
-        <GameScreen
-          current={game.current}
-          streak={game.streak}
-          isRecord={game.streak > game.highScore}
-          options={game.options}
-          selected={game.selected}
-          animKey={game.animKey}
-          imgLoaded={game.imgLoaded}
-          isLeaving={game.isLeaving}
-          onSelect={game.handleSelect}
-          onImgLoad={() => game.setImgLoaded(true)}
-        />
-      ) : null}
+        <Outlet />
       </main>
 
-      <button
-        className={styles.cogButton}
-        onClick={() => setSettingsOpen(o => !o)}
-        aria-label="Settings"
-      >
-        ⚙
-      </button>
-
-      {settingsOpen && (
-        <SettingsPanel
-          difficulty={difficulty}
-          regionFilter={regionFilter}
-          onDifficultyChange={d => { setDifficulty(d); setSettingsOpen(false); }}
-          onRegionChange={r => { setRegionFilter(r); setSettingsOpen(false); }}
-          onClose={() => setSettingsOpen(false)}
-        />
-      )}
+      <Footer />
     </div>
   );
 }

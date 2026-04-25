@@ -61,6 +61,12 @@
   width: 100%;
 }
 
+@media (max-width: 480px) {
+  .stumpedSection {
+    display: none;
+  }
+}
+
 .stumpedTag {
   font-family: var(--font-mono);
   font-size: 10px;

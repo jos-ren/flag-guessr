@@ -19,6 +19,7 @@ function applyFavicon(emoji: string) {
 export function setFlagFavicon(code: string) {
   const country = countries.find(c => c.code === code)
   if (country) applyFavicon(country.emoji)
+  else setRandomFlagFavicon()
 }
 
 export function setRandomFlagFavicon() {

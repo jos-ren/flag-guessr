@@ -4,6 +4,7 @@ import styles from './FlagCard.module.css';
 interface Props {
   code: string;
   alt: string;
+  imageUrl?: string;
   animated?: boolean;
   isLeaving?: boolean;
   imgLoaded?: boolean;
@@ -11,7 +12,7 @@ interface Props {
   ring?: 'error';
 }
 
-export default function FlagCard({ code, alt, animated, isLeaving, imgLoaded, onLoad, ring }: Props) {
+export default function FlagCard({ code, alt, imageUrl, animated, isLeaving, imgLoaded, onLoad, ring }: Props) {
   const [ratio, setRatio] = useState<number | null>(null);
 
   function handleLoad(e: React.SyntheticEvent<HTMLImageElement>) {
@@ -38,7 +39,7 @@ export default function FlagCard({ code, alt, animated, isLeaving, imgLoaded, on
     <div className={styles.outer}>
       <div className={cardClass} style={cardStyle}>
         <img
-          src={`https://flagcdn.com/w640/${code}.png`}
+          src={imageUrl ?? `https://flagcdn.com/w640/${code}.png`}
           alt={alt}
           draggable={false}
           onLoad={handleLoad}

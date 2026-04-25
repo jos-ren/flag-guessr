@@ -3,9 +3,24 @@ import type { GameMode } from '@/types';
 export const GAME_MODES: GameMode[] = [
   {
     id: 'country-flags',
-    title: 'Country Flags',
+    title: 'World Country Flags',
     description: 'Identify countries by their flag. How long can your streak go?',
     flagCode: 'jp',
+    available: true,
+  },
+  {
+    id: 'us-state-flags',
+    title: 'US State Flags',
+    description: 'Identify all 50 American state flags. Can you name them all?',
+    flagCode: 'us-tx',
+    available: true,
+  },
+  {
+    id: 'ca-province-flags',
+    title: 'Canadian Province Flags',
+    description: 'Identify all 13 Canadian provinces and territories by their flag.',
+    flagCode: 'ca-qc',
+    flagImageUrl: 'https://upload.wikimedia.org/wikipedia/commons/5/5f/Flag_of_Quebec.svg',
     available: true,
   },
   {

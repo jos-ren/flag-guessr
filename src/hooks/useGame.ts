@@ -1,9 +1,11 @@
-import { useState, useRef, useEffect, useCallback, useMemo } from 'react';
-import type { Country, Phase, GuessRecord, Difficulty, RegionFilter } from '@/types';
-import { HS_KEY, COUNTRY_REGIONS, ICONIC_COUNTRY_CODES } from '@/constants';
+import { useState, useRef, useEffect, useCallback } from 'react';
+import type { Country, Phase, GuessRecord } from '@/types';
+import { HS_KEY, HS_KEY_STATES, HS_KEY_PROVINCES } from '@/constants';
 import { shuffle, getOptions } from '@/utils';
-import { loadStats, recordAnswer, type StatsMap } from '@/stats';
+import { loadStats, recordAnswer, COUNTRY_STATS_KEY, STATE_STATS_KEY, PROVINCE_STATS_KEY, type StatsMap } from '@/stats';
 import COUNTRIES from '@/data/countries.json';
+import STATES from '@/data/states.json';
+import PROVINCES from '@/data/provinces.json';
 
 interface UseGameReturn {
   current: Country | null;
@@ -18,34 +20,19 @@ interface UseGameReturn {
   animKey: number;
   imgLoaded: boolean;
   setImgLoaded: (val: boolean) => void;
-  startGame: () => void;
+  startGame: (modeId?: string) => void;
   handleSelect: (country: Country) => void;
   isGameOver: boolean;
   isLeaving: boolean;
   guessHistory: GuessRecord[];
+  currentMode: string;
 }
 
 const ALL_COUNTRIES = COUNTRIES as Country[];
+const ALL_STATES = STATES as Country[];
+const ALL_PROVINCES = PROVINCES as Country[];
 
-function buildDeck(pool: Country[], difficulty: Difficulty, excludeCode?: string): Country[] {
-  let deck = pool.filter(c => excludeCode ? c.code !== excludeCode : true);
-
-  if (difficulty === 'easy') {
-    const iconic = shuffle(deck.filter(c => ICONIC_COUNTRY_CODES.has(c.code)));
-    const rest = shuffle(deck.filter(c => !ICONIC_COUNTRY_CODES.has(c.code)));
-    deck = [...iconic, ...rest];
-  } else if (difficulty === 'hard') {
-    const nonIconic = shuffle(deck.filter(c => !ICONIC_COUNTRY_CODES.has(c.code)));
-    const iconic = shuffle(deck.filter(c => ICONIC_COUNTRY_CODES.has(c.code)));
-    deck = [...nonIconic, ...iconic];
-  } else {
-    deck = shuffle(deck);
-  }
-
-  return deck;
-}
-
-export function useGame(difficulty: Difficulty, regionFilter: RegionFilter): UseGameReturn {
+export function useGame(): UseGameReturn {
   const [current, setCurrent] = useState<Country | null>(null);
   const [options, setOptions] = useState<Country[]>([]);
   const [selected, setSelected] = useState<Country | null>(null);
@@ -54,45 +41,48 @@ export function useGame(difficulty: Difficulty, regionFilter: RegionFilter): Use
   const [stumpedBy, setStumpedBy] = useState<Country | null>(null);
   const [highScore, setHighScore] = useState(() => parseInt(localStorage.getItem(HS_KEY) ?? '0', 10));
   const [isNewHigh, setIsNewHigh] = useState(false);
-  const [phase, setPhase] = useState<Phase>('gameover');
+  const [phase, setPhase] = useState<Phase>('idle');
   const [animKey, setAnimKey] = useState(0);
   const [imgLoaded, setImgLoaded] = useState(false);
   const [, setStats] = useState<StatsMap>(loadStats);
   const [guessHistory, setGuessHistory] = useState<GuessRecord[]>([]);
   const deckRef = useRef<Country[]>([]);
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const [currentMode, setCurrentMode] = useState('country-flags');
+  const currentModeRef = useRef('country-flags');
+  const hsKeyRef = useRef(HS_KEY);
+  const statsKeyRef = useRef(COUNTRY_STATS_KEY);
 
-  const countryPool = useMemo(() => {
-    const base = regionFilter === 'all'
-      ? ALL_COUNTRIES
-      : ALL_COUNTRIES.filter(c => COUNTRY_REGIONS[c.code] === regionFilter);
-    return base.length >= 8 ? base : ALL_COUNTRIES;
-  }, [regionFilter]);
-
-  // Use refs to avoid stale closures in callbacks while still reacting to changes via useEffect
-  const countryPoolRef = useRef(countryPool);
-  const difficultyRef = useRef(difficulty);
-  useEffect(() => { countryPoolRef.current = countryPool; }, [countryPool]);
-  useEffect(() => { difficultyRef.current = difficulty; }, [difficulty]);
+  const getActivePool = useCallback(() => {
+    if (currentModeRef.current === 'us-state-flags') return ALL_STATES;
+    if (currentModeRef.current === 'ca-province-flags') return ALL_PROVINCES;
+    return ALL_COUNTRIES;
+  }, []);
 
   const dealNext = useCallback((excludeCode?: string) => {
-    const pool = countryPoolRef.current;
-    const diff = difficultyRef.current;
+    const pool = getActivePool();
     if (deckRef.current.length === 0) {
-      deckRef.current = buildDeck(pool, diff, excludeCode);
+      deckRef.current = shuffle(pool.filter(c => excludeCode ? c.code !== excludeCode : true));
     }
     const country = deckRef.current.shift()!;
     setCurrent(country);
-    setOptions(getOptions(country, pool, diff));
+    setOptions(getOptions(country, pool));
     setSelected(null);
     setImgLoaded(false);
     setAnimKey(k => k + 1);
-  }, []);
+  }, [getActivePool]);
 
-  const startGame = useCallback(() => {
-    const pool = countryPoolRef.current;
-    const diff = difficultyRef.current;
-    deckRef.current = buildDeck(pool, diff);
+  const startGame = useCallback((modeId?: string) => {
+    if (modeId !== undefined) {
+      currentModeRef.current = modeId;
+      setCurrentMode(modeId);
+      const newHsKey = modeId === 'us-state-flags' ? HS_KEY_STATES : modeId === 'ca-province-flags' ? HS_KEY_PROVINCES : HS_KEY;
+      hsKeyRef.current = newHsKey;
+      statsKeyRef.current = modeId === 'us-state-flags' ? STATE_STATS_KEY : modeId === 'ca-province-flags' ? PROVINCE_STATS_KEY : COUNTRY_STATS_KEY;
+      setHighScore(parseInt(localStorage.getItem(newHsKey) ?? '0', 10));
+    }
+    const pool = getActivePool();
+    deckRef.current = shuffle(pool);
     setStreak(0);
     setFinalStreak(0);
     setStumpedBy(null);
@@ -101,19 +91,11 @@ export function useGame(difficulty: Difficulty, regionFilter: RegionFilter): Use
     setPhase('active');
     const country = deckRef.current.shift()!;
     setCurrent(country);
-    setOptions(getOptions(country, pool, diff));
+    setOptions(getOptions(country, pool));
     setSelected(null);
     setImgLoaded(false);
     setAnimKey(k => k + 1);
-  }, []);
-
-  useEffect(() => { startGame(); }, [startGame]);
-
-  const isFirstMount = useRef(true);
-  useEffect(() => {
-    if (isFirstMount.current) { isFirstMount.current = false; return; }
-    startGame();
-  }, [difficulty, regionFilter]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [getActivePool]);
 
   const handleSelect = useCallback((country: Country) => {
     if (selected || phase !== 'active' || !current) return;
@@ -121,7 +103,7 @@ export function useGame(difficulty: Difficulty, regionFilter: RegionFilter): Use
     setPhase('answered');
     const isCorrect = country.code === current.code;
 
-    setStats(prev => recordAnswer(prev, current.code, isCorrect));
+    setStats(prev => recordAnswer(prev, current.code, isCorrect, statsKeyRef.current));
     setGuessHistory(prev => [...prev, { country: current, correct: isCorrect }]);
 
     if (isCorrect) {
@@ -137,7 +119,7 @@ export function useGame(difficulty: Difficulty, regionFilter: RegionFilter): Use
       setStumpedBy(current);
       setFinalStreak(streak);
       if (streak > highScore) {
-        localStorage.setItem(HS_KEY, String(streak));
+        localStorage.setItem(hsKeyRef.current, String(streak));
         setHighScore(streak);
         setIsNewHigh(true);
       }
@@ -167,5 +149,6 @@ export function useGame(difficulty: Difficulty, regionFilter: RegionFilter): Use
     isGameOver: phase === 'gameover',
     isLeaving: phase === 'leaving',
     guessHistory,
+    currentMode,
   };
 }

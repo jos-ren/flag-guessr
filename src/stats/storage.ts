@@ -1,16 +1,18 @@
 import type { StatsMap } from './types';
 
-const STATS_KEY = 'fg_country_stats';
+export const COUNTRY_STATS_KEY = 'fg_country_stats';
+export const STATE_STATS_KEY = 'fg_state_stats';
+export const PROVINCE_STATS_KEY = 'fg_province_stats';
 
-export function loadStats(): StatsMap {
+export function loadStats(key: string = COUNTRY_STATS_KEY): StatsMap {
   try {
-    return JSON.parse(localStorage.getItem(STATS_KEY) ?? '{}') as StatsMap;
+    return JSON.parse(localStorage.getItem(key) ?? '{}') as StatsMap;
   } catch {
     return {};
   }
 }
 
-export function recordAnswer(stats: StatsMap, code: string, correct: boolean): StatsMap {
+export function recordAnswer(stats: StatsMap, code: string, correct: boolean, key: string = COUNTRY_STATS_KEY): StatsMap {
   const entry = stats[code] ?? { correct: 0, wrong: 0 };
   const updated: StatsMap = {
     ...stats,
@@ -18,6 +20,6 @@ export function recordAnswer(stats: StatsMap, code: string, correct: boolean): S
       ? { ...entry, correct: entry.correct + 1 }
       : { ...entry, wrong: entry.wrong + 1 },
   };
-  localStorage.setItem(STATS_KEY, JSON.stringify(updated));
+  localStorage.setItem(key, JSON.stringify(updated));
   return updated;
 }

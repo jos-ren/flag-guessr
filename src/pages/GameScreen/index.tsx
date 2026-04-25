@@ -2,7 +2,6 @@ import type { Country } from '@/types';
 import FlagCard from '@/components/FlagCard';
 import OptionButton from '@/components/OptionButton';
 import type { OptionState } from '@/components/OptionButton';
-import StreakPill from '@/components/StreakPill';
 import styles from './GameScreen.module.css';
 
 interface Props {
@@ -32,14 +31,17 @@ export default function GameScreen({
   return (
     <div className={styles.container}>
 
-      <div className={styles.header}>
-        <StreakPill streak={streak} isRecord={isRecord} />
-      </div>
+      {streak > 0 && (
+        <div className={`${styles.streakLabel}${isRecord ? ` ${styles.streakLabelRecord}` : ''}`}>
+          {streak}
+        </div>
+      )}
 
       <div className={styles.flagWrap}>
         <FlagCard
           key={`flag-${animKey}`}
           code={current.code}
+          imageUrl={current.imageUrl}
           alt="country flag"
           animated
           isLeaving={isLeaving}

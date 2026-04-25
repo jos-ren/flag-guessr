@@ -5,20 +5,17 @@
   flex-direction: column;
 }
 
-.header {
-  display: flex;
-  justify-content: flex-end;
-  align-items: center;
-  margin-bottom: 20px;
+.streakLabel {
+  font-family: var(--font-mono);
+  font-size: 28px;
+  font-weight: 700;
+  color: var(--color-text);
+  text-align: center;
+  margin-bottom: 10px;
 }
 
-.label {
-  font-family: var(--font-mono);
-  font-size: 11px;
-  font-weight: 600;
-  letter-spacing: 0.15em;
-  color: var(--color-text-secondary);
-  text-transform: uppercase;
+.streakLabelRecord {
+  color: var(--color-accent);
 }
 
 .flagWrap {
@@ -52,4 +49,10 @@
 .optionsGridLeaving {
   opacity: 0;
   transform: translateY(6px);
+}
+
+@media (max-width: 480px) {
+  .optionsGrid {
+    grid-template-columns: 1fr;
+  }
 }

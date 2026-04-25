@@ -10,11 +10,11 @@ interface Props {
   stumpedBy: Country | null;
   guessHistory: GuessRecord[];
   onPlayAgain: () => void;
-  onStats: () => void;
+  onHome: () => void;
 }
 
 export default function GameOverScreen({
-  finalStreak, highScore, isNewHigh, stumpedBy, guessHistory, onPlayAgain, onStats,
+  finalStreak, highScore, isNewHigh, stumpedBy, guessHistory, onPlayAgain, onHome,
 }: Props) {
   return (
     <div className={`${styles.enter} ${styles.container}`}>
@@ -31,7 +31,7 @@ export default function GameOverScreen({
         <div className={styles.stumpedSection}>
           <div className={styles.stumpedTag}>ended your streak</div>
           <div className={styles.flagWrap}>
-            <FlagCard code={stumpedBy.code} alt={stumpedBy.name} ring="error" />
+            <FlagCard code={stumpedBy.code} imageUrl={stumpedBy.imageUrl} alt={stumpedBy.name} ring="error" />
           </div>
           <div className={styles.stumpedName}>{stumpedBy.name}</div>
         </div>
@@ -42,9 +42,9 @@ export default function GameOverScreen({
           bg="var(--color-btn-bg)"
           color="var(--color-btn-text)"
           border="1.5px solid var(--color-stat-border)"
-          onClick={onStats}
+          onClick={onHome}
         >
-          My Progress
+          All Games
         </ActionButton>
         <ActionButton
           bg="var(--color-accent)"
@@ -65,7 +65,7 @@ export default function GameOverScreen({
             {[...guessHistory].reverse().map(({ country, correct }, i) => (
               <div key={i} className={styles.historyItem}>
                 <img
-                  src={`https://flagcdn.com/w80/${country.code}.png`}
+                  src={country.imageUrl ?? `https://flagcdn.com/w80/${country.code}.png`}
                   alt={country.name}
                   className={styles.historyFlag}
                 />

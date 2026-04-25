@@ -1,11 +1,11 @@
 import { useMemo, type CSSProperties } from 'react';
 import type { Country } from '@/types';
-import { loadStats } from '@/stats';
+import { loadStats, COUNTRY_STATS_KEY, STATE_STATS_KEY, PROVINCE_STATS_KEY } from '@/stats';
 import countriesJson from '@/data/countries.json';
+import statesJson from '@/data/states.json';
+import provincesJson from '@/data/provinces.json';
 import styles from './StatsScreen.module.css';
 
-const allCountries = countriesJson as Country[];
-const TOTAL = allCountries.length;
 const RADIUS = 72;
 const CIRCUMFERENCE = 2 * Math.PI * RADIUS;
 
@@ -22,13 +22,28 @@ function barClass(accuracy: number): string {
   return styles.barHigh!;
 }
 
-export default function StatsScreen() {
+interface Props {
+  mode: string;
+}
+
+export default function StatsScreen({ mode }: Props) {
+  const allItems = (
+    mode === 'us-state-flags' ? statesJson :
+    mode === 'ca-province-flags' ? provincesJson :
+    countriesJson
+  ) as Country[];
+  const statsKey =
+    mode === 'us-state-flags' ? STATE_STATS_KEY :
+    mode === 'ca-province-flags' ? PROVINCE_STATS_KEY :
+    COUNTRY_STATS_KEY;
+  const TOTAL = allItems.length;
+
   const { seenCount, seenList, unseenList } = useMemo(() => {
-    const stats = loadStats();
+    const stats = loadStats(statsKey);
     const entries: StudyEntry[] = [];
     const unseen: Country[] = [];
 
-    for (const country of allCountries) {
+    for (const country of allItems) {
       const s = stats[country.code];
       if (!s || s.correct + s.wrong === 0) {
         unseen.push(country);
@@ -45,7 +60,7 @@ export default function StatsScreen() {
     );
 
     return { seenCount: entries.length, seenList: entries, unseenList: unseen };
-  }, []);
+  }, [allItems, statsKey]);
 
   const dashOffset = CIRCUMFERENCE * (1 - seenCount / TOTAL);
 
@@ -79,7 +94,7 @@ export default function StatsScreen() {
             {seenList.map(({ country, correct, total, accuracy }) => (
               <div key={country.code} className={styles.row}>
                 <img
-                  src={`https://flagcdn.com/w80/${country.code}.png`}
+                  src={country.imageUrl ?? `https://flagcdn.com/w80/${country.code}.png`}
                   alt={country.name}
                   className={styles.flag}
                 />
@@ -109,7 +124,7 @@ export default function StatsScreen() {
             {unseenList.map(country => (
               <div key={country.code} className={`${styles.row} ${styles.rowUnseen}`}>
                 <img
-                  src={`https://flagcdn.com/w80/${country.code}.png`}
+                  src={country.imageUrl ?? `https://flagcdn.com/w80/${country.code}.png`}
                   alt={country.name}
                   className={styles.flag}
                 />
