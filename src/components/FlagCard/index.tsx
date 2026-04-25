@@ -12,6 +12,7 @@ interface Props {
 
 export default function FlagCard({ code, alt, animated, isLeaving, imgLoaded, onLoad, ring }: Props) {
   let containerClass = styles.container;
+  if (imgLoaded !== undefined && !imgLoaded) containerClass += ` ${styles.containerLoading}`;
   if (animated) containerClass += ` ${styles.containerAnimated}`;
   if (isLeaving) containerClass += ` ${styles.containerLeaving}`;
   if (ring === 'error') containerClass += ` ${styles.containerRingError}`;

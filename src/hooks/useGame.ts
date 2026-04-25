@@ -1,8 +1,8 @@
-import { useState, useRef, useEffect, useCallback, useMemo } from 'react';
-import type { Country, Phase, TopCountry } from '@/types';
+import { useState, useRef, useEffect, useCallback } from 'react';
+import type { Country, Phase, GuessRecord } from '@/types';
 import { HS_KEY } from '@/constants';
 import { shuffle, getOptions } from '@/utils';
-import { loadStats, recordAnswer, getTopCorrect, type StatsMap } from '@/stats';
+import { loadStats, recordAnswer, type StatsMap } from '@/stats';
 import COUNTRIES from '@/data/countries.json';
 
 interface UseGameReturn {
@@ -22,7 +22,7 @@ interface UseGameReturn {
   handleSelect: (country: Country) => void;
   isGameOver: boolean;
   isLeaving: boolean;
-  topCountries: TopCountry[];
+  guessHistory: GuessRecord[];
 }
 
 const ALL_COUNTRIES = COUNTRIES as Country[];
@@ -40,6 +40,7 @@ export function useGame(): UseGameReturn {
   const [animKey, setAnimKey] = useState(0);
   const [imgLoaded, setImgLoaded] = useState(false);
   const [stats, setStats] = useState<StatsMap>(loadStats);
+  const [guessHistory, setGuessHistory] = useState<GuessRecord[]>([]);
   const deckRef = useRef<Country[]>([]);
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
@@ -63,6 +64,7 @@ export function useGame(): UseGameReturn {
     setFinalStreak(0);
     setStumpedBy(null);
     setIsNewHigh(false);
+    setGuessHistory([]);
     setPhase('active');
     const country = deckRef.current.shift()!;
     setCurrent(country);
@@ -81,6 +83,7 @@ export function useGame(): UseGameReturn {
     const isCorrect = country.code === current.code;
 
     setStats(prev => recordAnswer(prev, current.code, isCorrect));
+    setGuessHistory(prev => [...prev, { country: current, correct: isCorrect }]);
 
     if (isCorrect) {
       setStreak(s => s + 1);
@@ -107,15 +110,6 @@ export function useGame(): UseGameReturn {
 
   useEffect(() => () => { if (timerRef.current) clearTimeout(timerRef.current); }, []);
 
-  const topCountries = useMemo<TopCountry[]>(() =>
-    getTopCorrect(stats, 5).map(({ code, correct, wrong }) => ({
-      code,
-      name: ALL_COUNTRIES.find(c => c.code === code)?.name ?? code,
-      correct,
-      wrong,
-    }))
-  , [stats]);
-
   return {
     current,
     options,
@@ -133,6 +127,6 @@ export function useGame(): UseGameReturn {
     handleSelect,
     isGameOver: phase === 'gameover',
     isLeaving: phase === 'leaving',
-    topCountries,
+    guessHistory,
   };
 }

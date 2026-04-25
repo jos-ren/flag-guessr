@@ -4,12 +4,14 @@
 }
 
 .container {
-  position: relative;
   background: var(--color-flag-bg);
   border-radius: 16px;
   overflow: hidden;
-  aspect-ratio: 16/10;
   box-shadow: var(--shadow-flag);
+}
+
+.containerLoading {
+  aspect-ratio: 3/2;
 }
 
 .containerAnimated {
@@ -30,12 +32,9 @@
 }
 
 .image {
-  position: absolute;
-  inset: 8px;
-  width: calc(100% - 16px);
-  height: calc(100% - 16px);
-  object-fit: contain;
   display: block;
+  width: 100%;
+  height: auto;
 }
 
 .imageFade {

@@ -1,2 +1,2 @@
-export type { Country, TopCountry } from './country';
-export type { ResultMessage, Phase } from './game';
+export type { Country } from './country';
+export type { ResultMessage, Phase, GuessRecord } from './game';

@@ -14,7 +14,7 @@ export default function AppShell() {
           highScore={game.highScore}
           isNewHigh={game.isNewHigh}
           stumpedBy={game.stumpedBy}
-          topCountries={game.topCountries}
+          guessHistory={game.guessHistory}
           onPlayAgain={game.startGame}
         />
       ) : game.current ? (

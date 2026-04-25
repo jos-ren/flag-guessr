@@ -1,4 +1,5 @@
 .root {
+  box-sizing: border-box;
   min-height: 100vh;
   background-color: var(--color-bg);
   background-image: radial-gradient(circle, var(--color-dot) 1px, transparent 1px);

@@ -1,7 +1,7 @@
-import type { Country, TopCountry } from '@/types';
+import type { Country, GuessRecord } from '@/types';
 import FlagCard from '@/components/FlagCard';
 import StatCard from '@/components/StatCard';
-import StrengthsList from '@/components/StrengthsList';
+import RoundHistory from '@/components/RoundHistory';
 import styles from './GameOverScreen.module.css';
 
 interface Props {
@@ -9,12 +9,12 @@ interface Props {
   highScore: number;
   isNewHigh: boolean;
   stumpedBy: Country | null;
-  topCountries: TopCountry[];
+  guessHistory: GuessRecord[];
   onPlayAgain: () => void;
 }
 
 export default function GameOverScreen({
-  finalStreak, highScore, isNewHigh, stumpedBy, topCountries, onPlayAgain,
+  finalStreak, highScore, isNewHigh, stumpedBy, guessHistory, onPlayAgain,
 }: Props) {
   return (
     <div className={`${styles.enter} ${styles.container}`}>
@@ -53,7 +53,7 @@ export default function GameOverScreen({
         {stumpedBy ? 'Try Again' : 'Play'}
       </button>
 
-      <StrengthsList countries={topCountries} />
+      <RoundHistory guesses={guessHistory} />
     </div>
   );
 }
