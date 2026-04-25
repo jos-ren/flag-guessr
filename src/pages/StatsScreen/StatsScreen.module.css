@@ -1,0 +1,203 @@
+.container {
+  width: 100%;
+  max-width: 480px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding-bottom: 48px;
+}
+
+.heading {
+  margin: 0 0 24px;
+  font-family: var(--font-heading);
+  font-size: 26px;
+  font-weight: 800;
+  color: var(--color-text);
+  letter-spacing: -0.02em;
+  align-self: flex-start;
+}
+
+/* Ring */
+
+.ringWrapper {
+  position: relative;
+  width: 180px;
+  height: 180px;
+  margin-bottom: 28px;
+}
+
+.ring {
+  transform: rotate(-90deg);
+}
+
+.ringTrack {
+  fill: none;
+  stroke: var(--color-progress-track);
+  stroke-width: 12;
+}
+
+.ringFill {
+  fill: none;
+  stroke: var(--color-accent);
+  stroke-width: 12;
+  stroke-linecap: round;
+  animation: ringGrow 1.2s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+@keyframes ringGrow {
+  from { stroke-dashoffset: 452.4; }
+  to   { stroke-dashoffset: var(--dash-offset); }
+}
+
+.ringLabel {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+}
+
+.ringCount {
+  font-family: var(--font-heading);
+  font-size: 44px;
+  font-weight: 800;
+  color: var(--color-text);
+  letter-spacing: -0.03em;
+  line-height: 1;
+}
+
+.ringTotal {
+  font-family: var(--font-mono);
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--color-text-secondary);
+  margin-top: 3px;
+}
+
+.ringCaption {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 400;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--color-text-secondary);
+  margin-top: 8px;
+}
+
+/* Sections */
+
+.section {
+  width: 100%;
+  margin-top: 8px;
+  margin-bottom: 16px;
+}
+
+.sectionTitle {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--color-text-secondary);
+  margin-bottom: 10px;
+}
+
+.sectionCount {
+  background: var(--color-progress-track);
+  border-radius: 20px;
+  padding: 1px 7px;
+  font-size: 10px;
+  letter-spacing: 0.04em;
+}
+
+.empty {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--color-text-secondary);
+  padding: 10px 0;
+}
+
+/* Rows */
+
+.list {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: var(--color-stat-bg);
+  border: 1.5px solid var(--color-stat-border);
+  border-radius: 10px;
+  padding: 8px 12px;
+}
+
+.rowUnseen {
+  opacity: 0.5;
+}
+
+.flag {
+  width: 36px;
+  height: 24px;
+  object-fit: contain;
+  border-radius: 3px;
+  flex-shrink: 0;
+}
+
+.rowInfo {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  min-width: 0;
+}
+
+.countryName {
+  font-family: var(--font-heading);
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--color-text);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Accuracy bar */
+
+.barTrack {
+  height: 4px;
+  background: var(--color-progress-track);
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+.barFill {
+  height: 100%;
+  border-radius: 2px;
+  animation: barGrow 0.6s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+@keyframes barGrow {
+  from { width: 0; }
+  to   { width: calc(var(--acc, 0) * 100%); }
+}
+
+.barLow  { background: var(--color-wrong-border); }
+.barMid  { background: var(--color-accent); }
+.barHigh { background: var(--color-correct-border); }
+
+.fraction {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--color-text-secondary);
+  flex-shrink: 0;
+}

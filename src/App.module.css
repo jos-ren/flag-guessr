@@ -11,6 +11,9 @@
 }
 
 .topBar {
+  position: sticky;
+  top: 0;
+  z-index: 10;
   display: flex;
   align-items: center;
   padding: 16px 20px;

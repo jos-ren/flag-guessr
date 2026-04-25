@@ -4,12 +4,13 @@ import { useGame } from '@/hooks/useGame';
 import HomeScreen from '@/pages/HomeScreen';
 import GameScreen from '@/pages/GameScreen';
 import GameOverScreen from '@/pages/GameOverScreen';
+import StatsScreen from '@/pages/StatsScreen';
 import SettingsPanel from '@/components/SettingsPanel';
 import { setFlagFavicon, setRandomFlagFavicon } from '@/utils';
 import styles from './App.module.css';
 
 export default function App() {
-  const [screen, setScreen] = useState<'home' | 'playing'>('home');
+  const [screen, setScreen] = useState<'home' | 'playing' | 'stats'>('home');
   const [difficulty, setDifficulty] = useState<Difficulty>('normal');
   const [regionFilter, setRegionFilter] = useState<RegionFilter>('all');
   const [settingsOpen, setSettingsOpen] = useState(false);
@@ -35,6 +36,10 @@ export default function App() {
     setScreen('home');
   }
 
+  function handleStats() {
+    setScreen('stats');
+  }
+
   return (
     <div className={styles.root}>
       <nav className={styles.topBar}>
@@ -43,6 +48,8 @@ export default function App() {
       <main className={styles.main}>
       {screen === 'home' ? (
         <HomeScreen onPlay={handlePlay} />
+      ) : screen === 'stats' ? (
+        <StatsScreen />
       ) : game.isGameOver ? (
         <GameOverScreen
           finalStreak={game.finalStreak}
@@ -51,7 +58,7 @@ export default function App() {
           stumpedBy={game.stumpedBy}
           guessHistory={game.guessHistory}
           onPlayAgain={game.startGame}
-          onHome={handleHome}
+          onStats={handleStats}
         />
       ) : game.current ? (
         <GameScreen
