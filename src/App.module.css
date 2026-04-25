@@ -11,6 +11,12 @@
 }
 
 .topBar {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  background-color: var(--color-bg);
+  background-image: radial-gradient(circle, var(--color-dot) 1px, transparent 1px);
+  background-size: 28px 28px;
   display: flex;
   align-items: center;
   padding: 16px 20px;

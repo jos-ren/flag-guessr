@@ -1,10 +1,6 @@
 import countries from '@/data/countries.json'
 
-function applyFavicon(code: string) {
-  const emoji = code.toUpperCase().split('').map(
-    c => String.fromCodePoint(0x1F1E6 + c.charCodeAt(0) - 65)
-  ).join('')
-
+function applyFavicon(emoji: string) {
   const canvas = document.createElement('canvas')
   canvas.width = 32
   canvas.height = 32
@@ -21,10 +17,11 @@ function applyFavicon(code: string) {
 }
 
 export function setFlagFavicon(code: string) {
-  applyFavicon(code)
+  const country = countries.find(c => c.code === code)
+  if (country) applyFavicon(country.emoji)
 }
 
 export function setRandomFlagFavicon() {
-  const code = countries[Math.floor(Math.random() * countries.length)]!.code
-  applyFavicon(code)
+  const country = countries[Math.floor(Math.random() * countries.length)]!
+  applyFavicon(country.emoji)
 }

@@ -1,0 +1,20 @@
+.button {
+  box-sizing: border-box;
+  background: var(--btn-bg);
+  color: var(--btn-color);
+  border: var(--btn-border, none);
+  border-radius: 12px;
+  padding: 15px 0;
+  width: 100%;
+  font-family: var(--font-heading);
+  font-size: 16px;
+  font-weight: 800;
+  cursor: pointer;
+  letter-spacing: 0.04em;
+  box-shadow: 0 4px 24px var(--btn-glow, transparent);
+  transition: transform 0.15s;
+}
+
+.button:hover {
+  transform: translateY(-2px);
+}

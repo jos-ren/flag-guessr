@@ -12,6 +12,12 @@ export interface GuessRecord {
   correct: boolean;
 }
 
+export interface StatEntry {
+  country: Country;
+  count: number;
+  correct: boolean;
+}
+
 export type Difficulty = 'easy' | 'normal' | 'hard';
 export type RegionFilter = 'all' | 'africa' | 'americas' | 'asia' | 'europe' | 'middle-east' | 'oceania';
 

@@ -33,11 +33,11 @@
   margin-bottom: 16px;
 }
 
-.stumpedHeader {
+.stumpedFooter {
   display: flex;
   align-items: center;
   gap: 8px;
-  margin-bottom: 10px;
+  margin-top: 10px;
 }
 
 .stumpedName {
@@ -71,39 +71,9 @@
   margin-bottom: 14px;
 }
 
-.playButton {
-  background: var(--color-accent);
-  border: none;
-  border-radius: 12px;
-  padding: 15px 0;
+.buttonStack {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
   width: 100%;
-  font-family: var(--font-heading);
-  font-size: 16px;
-  font-weight: 800;
-  color: var(--color-accent-text);
-  cursor: pointer;
-  letter-spacing: 0.04em;
-  box-shadow: 0 4px 24px var(--color-accent-glow);
-  transition: transform 0.15s;
-}
-
-.playButton:hover {
-  transform: translateY(-2px);
-}
-
-.homeButton {
-  margin-top: 10px;
-  background: none;
-  border: none;
-  padding: 6px 0;
-  font-family: var(--font-heading);
-  font-size: 13px;
-  font-weight: 600;
-  color: var(--color-text-secondary);
-  cursor: pointer;
-  transition: color 0.15s;
-}
-
-.homeButton:hover {
-  color: var(--color-text);
 }

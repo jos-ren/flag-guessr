@@ -2,6 +2,7 @@ import type { Country, GuessRecord } from '@/types';
 import FlagCard from '@/components/FlagCard';
 import StatCard from '@/components/StatCard';
 import RoundHistory from '@/components/RoundHistory';
+import ActionButton from '@/components/ActionButton';
 import styles from './GameOverScreen.module.css';
 
 interface Props {
@@ -11,29 +12,14 @@ interface Props {
   stumpedBy: Country | null;
   guessHistory: GuessRecord[];
   onPlayAgain: () => void;
-  onHome: () => void;
+  onStats: () => void;
 }
 
 export default function GameOverScreen({
-  finalStreak, highScore, isNewHigh, stumpedBy, guessHistory, onPlayAgain, onHome,
+  finalStreak, highScore, isNewHigh, stumpedBy, guessHistory, onPlayAgain, onStats,
 }: Props) {
   return (
     <div className={`${styles.enter} ${styles.container}`}>
-
-      {stumpedBy && (
-        <div className={styles.stumpedSection}>
-          <div className={styles.stumpedHeader}>
-            <div className={styles.stumpedName}>{stumpedBy.name}</div>
-            <div className={styles.stumpedDot} />
-            <div className={styles.stumpedCaption}>stumped you</div>
-          </div>
-          <FlagCard
-            code={stumpedBy.code}
-            alt={stumpedBy.name}
-            ring="error"
-          />
-        </div>
-      )}
 
       <div className={styles.statsRow}>
         <StatCard value={finalStreak} label="This run" />
@@ -44,13 +30,39 @@ export default function GameOverScreen({
         />
       </div>
 
-      <button className={styles.playButton} onClick={onPlayAgain}>
-        {stumpedBy ? 'Try Again' : 'Play'}
-      </button>
+      {stumpedBy && (
+        <div className={styles.stumpedSection}>
+          <FlagCard
+            code={stumpedBy.code}
+            alt={stumpedBy.name}
+            ring="error"
+          />
+          <div className={styles.stumpedFooter}>
+            <div className={styles.stumpedName}>{stumpedBy.name}</div>
+            <div className={styles.stumpedDot} />
+            <div className={styles.stumpedCaption}>stumped you</div>
+          </div>
+        </div>
+      )}
 
-      <button className={styles.homeButton} onClick={onHome}>
-        ← Game modes
-      </button>
+      <div className={styles.buttonStack}>
+        <ActionButton
+          bg="var(--color-accent)"
+          color="var(--color-accent-text)"
+          glow="var(--color-accent-glow)"
+          onClick={onPlayAgain}
+        >
+          {stumpedBy ? 'Try Again' : 'Play'}
+        </ActionButton>
+        <ActionButton
+          bg="var(--color-btn-bg)"
+          color="var(--color-btn-text)"
+          border="1.5px solid var(--color-stat-border)"
+          onClick={onStats}
+        >
+          My Progress
+        </ActionButton>
+      </div>
 
       <RoundHistory guesses={guessHistory} />
     </div>
