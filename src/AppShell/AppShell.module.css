@@ -11,3 +11,28 @@
   font-family: var(--font-heading);
   transition: background-color 0.4s ease;
 }
+
+.cogButton {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: var(--color-btn-bg);
+  border: 1px solid var(--color-btn-border);
+  color: var(--color-text-secondary);
+  font-size: 24px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: var(--shadow-flag);
+  transition: color 0.15s ease, border-color 0.15s ease;
+  line-height: 1;
+}
+
+.cogButton:hover {
+  color: var(--color-text);
+  border-color: var(--color-btn-hover-border);
+}

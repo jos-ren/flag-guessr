@@ -32,7 +32,7 @@ export default function GameScreen({
     <div className={styles.container}>
 
       <div className={styles.header}>
-        <span className={styles.label}>Flag Guesser</span>
+        <span className={styles.label}>Flag Guessr</span>
         <StreakPill streak={streak} />
       </div>
 

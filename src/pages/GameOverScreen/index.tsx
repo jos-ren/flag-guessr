@@ -21,7 +21,7 @@ export default function GameOverScreen({
 
       <div className={styles.labelRow}>
         <span className={styles.label}>
-          {stumpedBy ? 'Game Over' : 'Flag Guesser'}
+          {stumpedBy ? 'Game Over' : 'Flag Guessr'}
         </span>
       </div>
 

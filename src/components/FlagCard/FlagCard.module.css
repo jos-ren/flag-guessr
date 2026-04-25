@@ -8,9 +8,14 @@
   border-radius: 16px;
   overflow: hidden;
   box-shadow: var(--shadow-flag);
+  width: fit-content;
+  max-width: 100%;
+  margin: 0 auto;
 }
 
 .containerLoading {
+  width: 360px;
+  max-width: 100%;
   aspect-ratio: 3/2;
 }
 
@@ -33,7 +38,8 @@
 
 .image {
   display: block;
-  width: 100%;
+  max-height: 240px;
+  width: auto;
   height: auto;
 }
 

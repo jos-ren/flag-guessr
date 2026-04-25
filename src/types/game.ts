@@ -11,3 +11,6 @@ export interface GuessRecord {
   country: Country;
   correct: boolean;
 }
+
+export type Difficulty = 'easy' | 'normal' | 'hard';
+export type RegionFilter = 'all' | 'africa' | 'americas' | 'asia' | 'europe' | 'middle-east' | 'oceania';
