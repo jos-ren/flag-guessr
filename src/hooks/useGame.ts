@@ -57,7 +57,7 @@ export function useGame(difficulty: Difficulty, regionFilter: RegionFilter): Use
   const [phase, setPhase] = useState<Phase>('gameover');
   const [animKey, setAnimKey] = useState(0);
   const [imgLoaded, setImgLoaded] = useState(false);
-  const [stats, setStats] = useState<StatsMap>(loadStats);
+  const [, setStats] = useState<StatsMap>(loadStats);
   const [guessHistory, setGuessHistory] = useState<GuessRecord[]>([]);
   const deckRef = useRef<Country[]>([]);
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);

@@ -17,9 +17,9 @@ interface StudyEntry {
 }
 
 function barClass(accuracy: number): string {
-  if (accuracy < 0.4) return styles.barLow;
-  if (accuracy < 0.7) return styles.barMid;
-  return styles.barHigh;
+  if (accuracy < 0.4) return styles.barLow!;
+  if (accuracy < 0.7) return styles.barMid!;
+  return styles.barHigh!;
 }
 
 export default function StatsScreen() {
