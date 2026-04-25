@@ -1,7 +1,6 @@
 import countries from '@/data/countries.json'
 
-export function setRandomFlagFavicon() {
-  const code = countries[Math.floor(Math.random() * countries.length)]!.code
+function applyFavicon(code: string) {
   const emoji = code.toUpperCase().split('').map(
     c => String.fromCodePoint(0x1F1E6 + c.charCodeAt(0) - 65)
   ).join('')
@@ -19,4 +18,13 @@ export function setRandomFlagFavicon() {
   link.rel = 'icon'
   link.href = canvas.toDataURL()
   if (!link.parentNode) document.head.appendChild(link)
+}
+
+export function setFlagFavicon(code: string) {
+  applyFavicon(code)
+}
+
+export function setRandomFlagFavicon() {
+  const code = countries[Math.floor(Math.random() * countries.length)]!.code
+  applyFavicon(code)
 }

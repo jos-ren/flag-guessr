@@ -1,16 +1,30 @@
 .pill {
   display: flex;
   align-items: center;
+  gap: 6px;
   background: var(--color-btn-bg);
   border: 1.5px solid var(--color-btn-border);
   border-radius: 99px;
   padding: 5px 14px;
-  transition: background 0.3s, border-color 0.3s;
+  transition: background 0.3s, border-color 0.3s, box-shadow 0.3s;
 }
 
 .pillActive {
   background: var(--color-streak-active-bg);
   border-color: var(--color-accent);
+}
+
+.pillRecord {
+  border-color: var(--color-accent);
+  box-shadow: 0 0 24px var(--color-accent-glow);
+}
+
+.trophy {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--color-accent);
+  line-height: 1;
 }
 
 .text {
@@ -21,5 +35,9 @@
 }
 
 .textActive {
+  color: var(--color-accent);
+}
+
+.textRecord {
   color: var(--color-accent);
 }

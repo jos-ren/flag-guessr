@@ -11,19 +11,14 @@ interface Props {
   stumpedBy: Country | null;
   guessHistory: GuessRecord[];
   onPlayAgain: () => void;
+  onHome: () => void;
 }
 
 export default function GameOverScreen({
-  finalStreak, highScore, isNewHigh, stumpedBy, guessHistory, onPlayAgain,
+  finalStreak, highScore, isNewHigh, stumpedBy, guessHistory, onPlayAgain, onHome,
 }: Props) {
   return (
     <div className={`${styles.enter} ${styles.container}`}>
-
-      <div className={styles.labelRow}>
-        <span className={styles.label}>
-          {stumpedBy ? 'Game Over' : 'Flag Guessr'}
-        </span>
-      </div>
 
       {stumpedBy && (
         <div className={styles.stumpedSection}>
@@ -51,6 +46,10 @@ export default function GameOverScreen({
 
       <button className={styles.playButton} onClick={onPlayAgain}>
         {stumpedBy ? 'Try Again' : 'Play'}
+      </button>
+
+      <button className={styles.homeButton} onClick={onHome}>
+        ← Game modes
       </button>
 
       <RoundHistory guesses={guessHistory} />

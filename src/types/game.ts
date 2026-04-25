@@ -14,3 +14,11 @@ export interface GuessRecord {
 
 export type Difficulty = 'easy' | 'normal' | 'hard';
 export type RegionFilter = 'all' | 'africa' | 'americas' | 'asia' | 'europe' | 'middle-east' | 'oceania';
+
+export interface GameMode {
+  id: string;
+  title: string;
+  description: string;
+  flagCode: string;
+  available: boolean;
+}

@@ -20,16 +20,12 @@ export default function FlagCard({ code, alt, animated, isLeaving, imgLoaded, on
     onLoad?.();
   }
 
-  const isSquarish = ratio !== null && ratio < 1.3;
+  let cardClass = styles.card;
+  if (animated) cardClass += ` ${styles.cardAnimated}`;
+  if (isLeaving) cardClass += ` ${styles.cardLeaving}`;
+  if (ring === 'error') cardClass += ` ${styles.cardRingError}`;
 
-  let containerClass = styles.container;
-  if (imgLoaded !== undefined && !imgLoaded) containerClass += ` ${styles.containerLoading}`;
-  if (isSquarish) containerClass += ` ${styles.containerSquarish}`;
-  if (animated) containerClass += ` ${styles.containerAnimated}`;
-  if (isLeaving) containerClass += ` ${styles.containerLeaving}`;
-  if (ring === 'error') containerClass += ` ${styles.containerRingError}`;
-
-  const containerStyle = ratio !== null
+  const cardStyle = ratio !== null
     ? { '--flag-ratio': String(ratio) } as CSSProperties
     : undefined;
 
@@ -39,14 +35,16 @@ export default function FlagCard({ code, alt, animated, isLeaving, imgLoaded, on
   }
 
   return (
-    <div className={containerClass} style={containerStyle}>
-      <img
-        src={`https://flagcdn.com/w640/${code}.png`}
-        alt={alt}
-        draggable={false}
-        onLoad={handleLoad}
-        className={imageClass}
-      />
+    <div className={styles.outer}>
+      <div className={cardClass} style={cardStyle}>
+        <img
+          src={`https://flagcdn.com/w640/${code}.png`}
+          alt={alt}
+          draggable={false}
+          onLoad={handleLoad}
+          className={imageClass}
+        />
+      </div>
     </div>
   );
 }

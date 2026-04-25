@@ -3,43 +3,53 @@
   to   { opacity: 1; transform: scale(1) translateY(0); }
 }
 
-.container {
+/* Fixed 3:2 stage — gives the layout a stable footprint regardless of flag shape.
+   Transparent so the app background shows in the gaps around the card. */
+.outer {
+  width: 100%;
+  aspect-ratio: 3/2;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--color-bg);
+}
+
+/* Flag card — sized to the flag's real ratio, centered in .outer.
+   width: 100% starts it full-width, aspect-ratio drives the height,
+   max-height: 100% clamps squarish flags (e.g. Switzerland) and the
+   CSS spec then reduces the width proportionally to match — giving a
+   perfectly-fitted card with no internal white space. */
+.card {
+  /* Compute exact width so the card fits the outer's 3:2 height without relying
+     on CSS to back-propagate a max-height clamp through a definite width. */
+  width: min(100%, calc(var(--flag-ratio, 1.5) * 100% * 2 / 3));
+  aspect-ratio: var(--flag-ratio, 1.5);
   background: var(--color-flag-bg);
   border-radius: 16px;
   overflow: hidden;
   box-shadow: var(--shadow-flag);
-  width: fit-content;
-  max-width: 100%;
-  margin: 0 auto;
 }
 
-.containerLoading {
-  width: 360px;
-  max-width: 100%;
-  aspect-ratio: 3/2;
-}
-
-.containerAnimated {
+.cardAnimated {
   opacity: 1;
   transform: scale(1);
   transition: opacity 0.28s ease, transform 0.28s ease;
   animation: flagEnter 0.4s cubic-bezier(0.2, 0, 0.3, 1) forwards;
 }
 
-.containerLeaving {
+.cardLeaving {
   opacity: 0;
   transform: scale(0.97);
   animation: none;
 }
 
-.containerRingError {
+.cardRingError {
   box-shadow: 0 0 0 2px rgba(220, 38, 38, 0.25), var(--shadow-flag);
 }
 
 .image {
   display: block;
-  max-height: 240px;
-  width: auto;
+  width: 100%;
   height: auto;
 }
 

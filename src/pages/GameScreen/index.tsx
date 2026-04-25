@@ -8,6 +8,7 @@ import styles from './GameScreen.module.css';
 interface Props {
   current: Country;
   streak: number;
+  isRecord: boolean;
   options: Country[];
   selected: Country | null;
   animKey: number;
@@ -25,15 +26,14 @@ function getOptionState(country: Country, current: Country, selected: Country | 
 }
 
 export default function GameScreen({
-  current, streak, options, selected, animKey,
+  current, streak, isRecord, options, selected, animKey,
   imgLoaded, isLeaving, onSelect, onImgLoad,
 }: Props) {
   return (
     <div className={styles.container}>
 
       <div className={styles.header}>
-        <span className={styles.label}>Flag Guessr</span>
-        <StreakPill streak={streak} />
+        <StreakPill streak={streak} isRecord={isRecord} />
       </div>
 
       <div className={styles.flagWrap}>

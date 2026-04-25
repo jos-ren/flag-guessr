@@ -13,7 +13,7 @@ export default function RoundHistory({ guesses }: Props) {
         <div className={styles.empty}>No flags guessed yet</div>
       ) : (
         <div className={styles.list}>
-          {guesses.map(({ country, correct }, i) => (
+          {[...guesses].reverse().map(({ country, correct }, i) => (
             <div key={i} className={styles.item}>
               <img
                 src={`https://flagcdn.com/w80/${country.code}.png`}
