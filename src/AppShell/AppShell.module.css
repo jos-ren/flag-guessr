@@ -1,0 +1,12 @@
+.root {
+  min-height: 100vh;
+  background-color: var(--color-bg);
+  background-image: radial-gradient(circle, var(--color-dot) 1px, transparent 1px);
+  background-size: 28px 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px 16px;
+  font-family: var(--font-heading);
+  transition: background-color 0.4s ease;
+}

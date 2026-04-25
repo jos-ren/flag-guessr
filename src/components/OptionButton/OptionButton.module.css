@@ -1,0 +1,74 @@
+.btn {
+  background: var(--color-btn-bg);
+  border: 1.5px solid var(--color-btn-border);
+  border-radius: 12px;
+  padding: 16px 12px;
+  color: var(--color-btn-text);
+  font-size: 15px;
+  font-weight: 700;
+  text-align: center;
+  cursor: pointer;
+  transition: background 0.15s, border-color 0.15s, color 0.15s, transform 0.15s, opacity 0.15s;
+  line-height: 1.2;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+  width: 100%;
+}
+
+.btn:hover:not(:disabled):not(.correct):not(.wrong):not(.reveal):not(.dimmed) {
+  background: var(--color-btn-hover-bg);
+  border-color: var(--color-btn-hover-border);
+  color: var(--color-btn-hover-text);
+  transform: translateY(-1px);
+}
+
+.btn:disabled {
+  cursor: default;
+}
+
+.entering {
+  animation: ansEnter 0.38s cubic-bezier(0.2, 0, 0.3, 1) both;
+  animation-delay: var(--ans-delay, 0s);
+}
+
+.correct {
+  background: var(--color-correct-bg) !important;
+  border-color: var(--color-correct-border) !important;
+  color: var(--color-correct-text) !important;
+  animation: correctPop 0.4s cubic-bezier(0.3, 1.4, 0.5, 1) forwards;
+}
+
+.wrong {
+  background: var(--color-wrong-bg) !important;
+  border-color: var(--color-wrong-border) !important;
+  color: var(--color-wrong-text) !important;
+  animation: shake 0.4s ease forwards;
+}
+
+.reveal {
+  background: var(--color-reveal-bg) !important;
+  border-color: var(--color-correct-border) !important;
+  color: var(--color-correct-text) !important;
+  opacity: 0.75;
+}
+
+.dimmed {
+  opacity: 0.25;
+}
+
+@keyframes ansEnter {
+  from { opacity: 0; transform: translateY(14px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes correctPop {
+  0%   { transform: scale(1); }
+  50%  { transform: scale(1.05); }
+  100% { transform: scale(1); }
+}
+
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  20%, 60%  { transform: translateX(-7px); }
+  40%, 80%  { transform: translateX(7px); }
+}

@@ -1,0 +1,92 @@
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.enter {
+  animation: fadeUp 0.5s cubic-bezier(0.2, 0, 0.3, 1) forwards;
+}
+
+.container {
+  width: 100%;
+  max-width: 480px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.labelRow {
+  margin-bottom: 20px;
+}
+
+.label {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--color-text-secondary);
+}
+
+.stumpedSection {
+  width: 100%;
+  margin-bottom: 16px;
+}
+
+.stumpedHeader {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 10px;
+}
+
+.stumpedName {
+  font-family: var(--font-heading);
+  font-size: 17px;
+  font-weight: 800;
+  color: var(--color-text);
+}
+
+.stumpedDot {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: #dc2626;
+  flex-shrink: 0;
+}
+
+.stumpedCaption {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--color-text-secondary);
+}
+
+.statsRow {
+  display: flex;
+  gap: 10px;
+  width: 100%;
+  margin-bottom: 14px;
+}
+
+.playButton {
+  background: var(--color-accent);
+  border: none;
+  border-radius: 12px;
+  padding: 15px 0;
+  width: 100%;
+  font-family: var(--font-heading);
+  font-size: 16px;
+  font-weight: 800;
+  color: var(--color-accent-text);
+  cursor: pointer;
+  letter-spacing: 0.04em;
+  box-shadow: 0 4px 24px var(--color-accent-glow);
+  transition: transform 0.15s;
+}
+
+.playButton:hover {
+  transform: translateY(-2px);
+}

@@ -1,0 +1,25 @@
+.pill {
+  display: flex;
+  align-items: center;
+  background: var(--color-btn-bg);
+  border: 1.5px solid var(--color-btn-border);
+  border-radius: 99px;
+  padding: 5px 14px;
+  transition: background 0.3s, border-color 0.3s;
+}
+
+.pillActive {
+  background: var(--color-streak-active-bg);
+  border-color: var(--color-accent);
+}
+
+.text {
+  font-family: var(--font-mono);
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--color-text-secondary);
+}
+
+.textActive {
+  color: var(--color-accent);
+}

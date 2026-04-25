@@ -1,0 +1,55 @@
+.container {
+  width: 100%;
+  max-width: 480px;
+  display: flex;
+  flex-direction: column;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.label {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.15em;
+  color: var(--color-text-secondary);
+  text-transform: uppercase;
+}
+
+.flagWrap {
+  margin-bottom: 22px;
+}
+
+.prompt {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--color-prompt);
+  margin-bottom: 12px;
+  opacity: 1;
+  transition: opacity 0.2s ease;
+}
+
+.promptLeaving {
+  opacity: 0;
+}
+
+.optionsGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  opacity: 1;
+  transform: translateY(0);
+  transition: opacity 0.22s ease, transform 0.22s ease;
+}
+
+.optionsGridLeaving {
+  opacity: 0;
+  transform: translateY(6px);
+}

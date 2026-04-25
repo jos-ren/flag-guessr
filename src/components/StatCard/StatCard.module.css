@@ -1,0 +1,40 @@
+.card {
+  flex: 1;
+  background: var(--color-stat-bg);
+  border: 1.5px solid var(--color-stat-border);
+  border-radius: 14px;
+  padding: 18px 16px;
+  text-align: center;
+  transition: border-color 0.3s, box-shadow 0.3s;
+}
+
+.cardHighlight {
+  border-color: var(--color-accent);
+  box-shadow: 0 0 24px var(--color-accent-glow);
+}
+
+.number {
+  font-family: var(--font-mono);
+  font-size: 34px;
+  font-weight: 700;
+  color: var(--color-text);
+  line-height: 1;
+  margin-bottom: 7px;
+}
+
+.numberHighlight {
+  color: var(--color-accent);
+}
+
+.label {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--color-text-secondary);
+}
+
+.labelHighlight {
+  color: var(--color-accent);
+}

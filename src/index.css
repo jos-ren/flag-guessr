@@ -1,0 +1,37 @@
+@import url('https://fonts.googleapis.com/css2?family=Nunito:wght@600;700;800&family=DM+Mono:wght@400;500&display=swap');
+
+:root {
+  --font-heading: 'Nunito', sans-serif;
+  --font-mono: 'DM Mono', monospace;
+  --color-bg: #f0ede6;
+  --color-dot: rgba(0, 0, 0, 0.045);
+  --color-flag-bg: #ffffff;
+  --color-text: #1a1816;
+  --color-text-secondary: #9a9080;
+  --color-accent: #b8970f;
+  --color-accent-text: #ffffff;
+  --color-accent-glow: rgba(184, 151, 15, 0.2);
+  --color-progress-track: #ddd8cc;
+  --shadow-flag: 0 0 0 1px rgba(0, 0, 0, 0.06), 0 16px 40px rgba(0, 0, 0, 0.12);
+  --color-btn-bg: #ffffff;
+  --color-btn-border: #ddd8cc;
+  --color-btn-text: #2a2720;
+  --color-btn-hover-bg: #faf7f2;
+  --color-btn-hover-border: #b8a890;
+  --color-btn-hover-text: #1a1816;
+  --color-correct-bg: #edfaf3;
+  --color-correct-border: #16a34a;
+  --color-correct-text: #16a34a;
+  --color-wrong-bg: #fef2f2;
+  --color-wrong-border: #dc2626;
+  --color-wrong-text: #dc2626;
+  --color-reveal-bg: #edfaf3;
+  --color-ring-bg: #ffffff;
+  --color-title: #c0b898;
+  --color-prompt: #9a9080;
+  --color-stat-bg: #ffffff;
+  --color-stat-border: #ddd8cc;
+  --color-streak-active-bg: #fffbea;
+}
+
+body { margin: 0; }

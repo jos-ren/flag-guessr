@@ -1,0 +1,49 @@
+@keyframes flagEnter {
+  from { opacity: 0; transform: scale(0.95) translateY(10px); }
+  to   { opacity: 1; transform: scale(1) translateY(0); }
+}
+
+.container {
+  position: relative;
+  background: var(--color-flag-bg);
+  border-radius: 16px;
+  overflow: hidden;
+  aspect-ratio: 16/10;
+  box-shadow: var(--shadow-flag);
+}
+
+.containerAnimated {
+  opacity: 1;
+  transform: scale(1);
+  transition: opacity 0.28s ease, transform 0.28s ease;
+  animation: flagEnter 0.4s cubic-bezier(0.2, 0, 0.3, 1) forwards;
+}
+
+.containerLeaving {
+  opacity: 0;
+  transform: scale(0.97);
+  animation: none;
+}
+
+.containerRingError {
+  box-shadow: 0 0 0 2px rgba(220, 38, 38, 0.25), var(--shadow-flag);
+}
+
+.image {
+  position: absolute;
+  inset: 8px;
+  width: calc(100% - 16px);
+  height: calc(100% - 16px);
+  object-fit: contain;
+  display: block;
+}
+
+.imageFade {
+  opacity: 0;
+  transition: opacity 0.25s ease;
+}
+
+.imageFadeVisible {
+  opacity: 1;
+  transition: opacity 0.25s ease;
+}
