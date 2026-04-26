@@ -3,10 +3,12 @@ import { useEffect, useRef } from 'react';
 import RootLayout from './App';
 import HomeScreen from '@/pages/HomeScreen';
 import GameScreen from '@/pages/GameScreen';
-import GameOverScreen from '@/pages/GameOverScreen';
+import ResultsScreen from '@/pages/ResultsScreen';
 import LeaderboardScreen from '@/pages/LeaderboardScreen';
 import { useGameContext } from '@/context';
-import { markCompleted } from '@/stats';
+import type { RunRecord } from '@/types';
+import { randomName } from '@/utils';
+import { saveRun } from '@/stats';
 
 const rootRoute = createRootRoute({ component: RootLayout });
 
@@ -42,25 +44,29 @@ const playRoute = createRoute({
     }, [game.phase]);
 
     useEffect(() => {
-      if (hasStarted.current && game.phase === 'gameover') {
-        void navigate({ to: '/game-over' });
-      }
-    }, [game.phase, navigate]);
+      if (!hasStarted.current) return;
+      if (game.phase !== 'gameover' && game.phase !== 'quizcomplete') return;
+      const correctCount = game.guessHistory.filter(r => r.correct).length;
+      const record: RunRecord = {
+        id: crypto.randomUUID(),
+        name: randomName(),
+        modeId: game.currentMode,
+        correctCount,
+        total: game.pool.length,
+        elapsedSeconds: game.elapsedSeconds,
+        timestamp: Date.now(),
+      };
+      saveRun(record);
+      void navigate({ to: '/results' });
+    }, [game.phase]); // eslint-disable-line react-hooks/exhaustive-deps
 
-    useEffect(() => {
-      if (game.phase === 'quizcomplete') {
-        markCompleted(game.statsKey);
-        void navigate({ to: '/leaderboard/$modeId', params: { modeId: game.currentMode } });
-      }
-    }, [game.phase, navigate, game.statsKey, game.currentMode]);
-
-    if (!game.current || game.isQuizComplete) return null;
+    if (!game.current || game.isQuizComplete || game.isGameOver) return null;
 
     return (
       <GameScreen
         current={game.current}
         streak={game.streak}
-        isRecord={game.streak > game.highScore}
+        isRecord={false}
         options={game.options}
         selected={game.selected}
         animKey={game.animKey}
@@ -80,26 +86,26 @@ const playRoute = createRoute({
   },
 });
 
-const gameOverRoute = createRoute({
+const resultsRoute = createRoute({
   getParentRoute: () => rootRoute,
-  path: '/game-over',
-  component: function GameOverRoute() {
+  path: '/results',
+  component: function ResultsRoute() {
     const navigate = useNavigate();
     const { game } = useGameContext();
 
     useEffect(() => {
-      if (!game.stumpedBy) void navigate({ to: '/', replace: true });
+      if (game.guessHistory.length === 0) void navigate({ to: '/', replace: true });
     }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
-    if (!game.stumpedBy) return null;
+    if (game.guessHistory.length === 0) return null;
 
     return (
-      <GameOverScreen
-        finalStreak={game.finalStreak}
-        highScore={game.highScore}
-        isNewHigh={game.isNewHigh}
-        stumpedBy={game.stumpedBy}
+      <ResultsScreen
         guessHistory={game.guessHistory}
+        total={game.pool.length}
+        elapsedSeconds={game.elapsedSeconds}
+        isGameOver={game.isGameOver}
+        modeId={game.currentMode}
         onPlayAgain={() => {
           void navigate({ to: '/play/$modeId', params: { modeId: game.currentMode } });
         }}
@@ -123,7 +129,7 @@ const leaderboardRoute = createRoute({
   },
 });
 
-const routeTree = rootRoute.addChildren([indexRoute, playRoute, gameOverRoute, leaderboardRoute]);
+const routeTree = rootRoute.addChildren([indexRoute, playRoute, resultsRoute, leaderboardRoute]);
 
 export const router = createRouter({
   routeTree,

@@ -1,8 +1,7 @@
 import { useState, useRef, useEffect, useCallback } from 'react';
 import type { Country, Phase, GuessRecord } from '@/types';
-import { HS_KEY, HS_KEY_STATES, HS_KEY_PROVINCES, HS_KEY_AFRICA, HS_KEY_NORTH_AMERICA, HS_KEY_SOUTH_AMERICA, HS_KEY_ASIA, HS_KEY_EUROPE, HS_KEY_OCEANIA, HS_KEY_ONE_PIECE, HS_KEY_NBA, HS_KEY_NHL, HS_KEY_MLB, HS_KEY_NFL, HS_KEY_CAPITALS, CONTINENTS, GAME_MODES } from '@/constants';
+import { CONTINENTS, GAME_MODES } from '@/constants';
 import { shuffle, getOptions } from '@/utils';
-import { loadStats, recordAnswer, COUNTRY_STATS_KEY, STATE_STATS_KEY, PROVINCE_STATS_KEY, AFRICA_STATS_KEY, NORTH_AMERICA_STATS_KEY, SOUTH_AMERICA_STATS_KEY, ASIA_STATS_KEY, EUROPE_STATS_KEY, OCEANIA_STATS_KEY, ONE_PIECE_STATS_KEY, NBA_STATS_KEY, NHL_STATS_KEY, MLB_STATS_KEY, NFL_STATS_KEY, CAPITALS_STATS_KEY, type StatsMap } from '@/stats';
 import COUNTRIES from '@/data/countries.json';
 import STATES from '@/data/us-states.json';
 import PROVINCES from '@/data/canada-provinces.json';
@@ -20,10 +19,6 @@ interface UseGameReturn {
   options: Country[];
   selected: Country | null;
   streak: number;
-  finalStreak: number;
-  stumpedBy: Country | null;
-  highScore: number;
-  isNewHigh: boolean;
   phase: Phase;
   animKey: number;
   imgLoaded: boolean;
@@ -35,7 +30,6 @@ interface UseGameReturn {
   isQuizComplete: boolean;
   guessHistory: GuessRecord[];
   currentMode: string;
-  statsKey: string;
   pool: Country[];
   answerMode: 'multiple-choice' | 'text-input';
   lives: number;
@@ -72,42 +66,6 @@ const MODE_POOLS: Record<string, Country[]> = {
   'capital-quiz': ALL_CAPITALS,
 };
 
-const MODE_HS_KEYS: Record<string, string> = {
-  'country-flags': HS_KEY,
-  'us-state-flags': HS_KEY_STATES,
-  'ca-province-flags': HS_KEY_PROVINCES,
-  'africa-flags': HS_KEY_AFRICA,
-  'north-america-flags': HS_KEY_NORTH_AMERICA,
-  'south-america-flags': HS_KEY_SOUTH_AMERICA,
-  'asia-flags': HS_KEY_ASIA,
-  'europe-flags': HS_KEY_EUROPE,
-  'oceania-flags': HS_KEY_OCEANIA,
-  'one-piece-flags': HS_KEY_ONE_PIECE,
-  'nba-logos': HS_KEY_NBA,
-  'nhl-logos': HS_KEY_NHL,
-  'mlb-logos': HS_KEY_MLB,
-  'nfl-logos': HS_KEY_NFL,
-  'capital-quiz': HS_KEY_CAPITALS,
-};
-
-const MODE_STATS_KEYS: Record<string, string> = {
-  'country-flags': COUNTRY_STATS_KEY,
-  'us-state-flags': STATE_STATS_KEY,
-  'ca-province-flags': PROVINCE_STATS_KEY,
-  'africa-flags': AFRICA_STATS_KEY,
-  'north-america-flags': NORTH_AMERICA_STATS_KEY,
-  'south-america-flags': SOUTH_AMERICA_STATS_KEY,
-  'asia-flags': ASIA_STATS_KEY,
-  'europe-flags': EUROPE_STATS_KEY,
-  'oceania-flags': OCEANIA_STATS_KEY,
-  'one-piece-flags': ONE_PIECE_STATS_KEY,
-  'nba-logos': NBA_STATS_KEY,
-  'nhl-logos': NHL_STATS_KEY,
-  'mlb-logos': MLB_STATS_KEY,
-  'nfl-logos': NFL_STATS_KEY,
-  'capital-quiz': CAPITALS_STATS_KEY,
-};
-
 function getPool(modeId: string): Country[] {
   return MODE_POOLS[modeId] ?? ALL_COUNTRIES;
 }
@@ -118,24 +76,17 @@ export function useGame(): UseGameReturn {
   const [options, setOptions] = useState<Country[]>([]);
   const [selected, setSelected] = useState<Country | null>(null);
   const [streak, setStreak] = useState(0);
-  const [finalStreak, setFinalStreak] = useState(0);
-  const [stumpedBy, setStumpedBy] = useState<Country | null>(null);
-  const [highScore, setHighScore] = useState(() => parseInt(localStorage.getItem(HS_KEY) ?? '0', 10));
-  const [isNewHigh, setIsNewHigh] = useState(false);
   const [phase, setPhase] = useState<Phase>('idle');
   const [lives, setLives] = useState(MAX_LIVES);
   const [eliminatedOptions, setEliminatedOptions] = useState<string[]>([]);
   const [elapsedSeconds, setElapsedSeconds] = useState(0);
   const [animKey, setAnimKey] = useState(0);
   const [imgLoaded, setImgLoaded] = useState(false);
-  const [, setStats] = useState<StatsMap>(loadStats);
   const [guessHistory, setGuessHistory] = useState<GuessRecord[]>([]);
   const deckRef = useRef<Country[]>([]);
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const [currentMode, setCurrentMode] = useState('country-flags');
   const currentModeRef = useRef('country-flags');
-  const hsKeyRef = useRef(HS_KEY);
-  const statsKeyRef = useRef(COUNTRY_STATS_KEY);
 
   const dealNext = useCallback(() => {
     const pool = getPool(currentModeRef.current);
@@ -152,16 +103,10 @@ export function useGame(): UseGameReturn {
     if (modeId !== undefined) {
       currentModeRef.current = modeId;
       setCurrentMode(modeId);
-      hsKeyRef.current = MODE_HS_KEYS[modeId] ?? HS_KEY;
-      statsKeyRef.current = MODE_STATS_KEYS[modeId] ?? COUNTRY_STATS_KEY;
-      setHighScore(parseInt(localStorage.getItem(hsKeyRef.current) ?? '0', 10));
     }
     const pool = getPool(currentModeRef.current);
     deckRef.current = shuffle([...pool]);
     setStreak(0);
-    setFinalStreak(0);
-    setStumpedBy(null);
-    setIsNewHigh(false);
     setGuessHistory([]);
     setLives(MAX_LIVES);
     setEliminatedOptions([]);
@@ -180,7 +125,6 @@ export function useGame(): UseGameReturn {
     if (eliminatedOptions.includes(country.code)) return;
 
     const isCorrect = country.code === current.code;
-    setStats(prev => recordAnswer(prev, current.code, isCorrect, statsKeyRef.current));
 
     const advance = () => {
       setPhase('leaving');
@@ -206,21 +150,14 @@ export function useGame(): UseGameReturn {
       if (newLives <= 0) {
         setSelected(country);
         setPhase('answered');
-        setStumpedBy(current);
         setGuessHistory(prev => [...prev, { country: current, correct: false, selected: country }]);
-        setFinalStreak(streak);
-        if (streak > highScore) {
-          localStorage.setItem(hsKeyRef.current, String(streak));
-          setHighScore(streak);
-          setIsNewHigh(true);
-        }
         timerRef.current = setTimeout(() => setPhase('gameover'), 1400);
       } else {
         setEliminatedOptions(prev => [...prev, country.code]);
         setGuessHistory(prev => [...prev, { country: current, correct: false, selected: country }]);
       }
     }
-  }, [phase, current, streak, highScore, lives, eliminatedOptions, dealNext]);
+  }, [phase, current, lives, eliminatedOptions, dealNext]);
 
   useEffect(() => () => { if (timerRef.current) clearTimeout(timerRef.current); }, []);
 
@@ -238,10 +175,6 @@ export function useGame(): UseGameReturn {
     options,
     selected,
     streak,
-    finalStreak,
-    stumpedBy,
-    highScore,
-    isNewHigh,
     phase,
     animKey,
     imgLoaded,
@@ -253,7 +186,6 @@ export function useGame(): UseGameReturn {
     isQuizComplete: phase === 'quizcomplete',
     guessHistory,
     currentMode,
-    statsKey: statsKeyRef.current,
     pool: getPool(currentMode),
     answerMode: currentModeConfig?.answerMode === 'text-input' ? 'text-input' : 'multiple-choice',
     lives,

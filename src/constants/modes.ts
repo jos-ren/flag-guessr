@@ -125,7 +125,7 @@ export const GAME_MODES: GameMode[] = [
   },
   {
     id: 'capital-quiz',
-    title: 'Capital Quiz',
+    title: 'Famous Capital Cities',
     description: 'See a flag — name the capital city.',
     flagCode: 'fr',
     available: true,

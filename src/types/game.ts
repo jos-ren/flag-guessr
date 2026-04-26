@@ -5,6 +5,16 @@ export interface ResultMessage {
   sub: string;
 }
 
+export interface RunRecord {
+  id: string;
+  name: string;
+  modeId: string;
+  correctCount: number;
+  total: number;
+  elapsedSeconds: number;
+  timestamp: number;
+}
+
 export type Phase = 'idle' | 'active' | 'answered' | 'leaving' | 'gameover' | 'quizcomplete';
 
 export interface GuessRecord {

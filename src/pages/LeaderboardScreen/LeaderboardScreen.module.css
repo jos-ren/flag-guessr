@@ -16,15 +16,6 @@
   margin-bottom: 24px;
 }
 
-.heading {
-  margin: 0;
-  font-family: var(--font-heading);
-  font-size: 26px;
-  font-weight: 800;
-  color: var(--color-text);
-  letter-spacing: -0.02em;
-}
-
 .modeSelect {
   appearance: none;
   background: var(--color-btn-bg);
@@ -48,188 +39,18 @@
   border-color: var(--color-btn-hover-border);
 }
 
-/* Ring */
-
-.ringWrapper {
-  position: relative;
-  width: 180px;
-  height: 180px;
-  margin-bottom: 28px;
-}
-
-.ring {
-  transform: rotate(-90deg);
-}
-
-.ringTrack {
-  fill: none;
-  stroke: var(--color-progress-track);
-  stroke-width: 12;
-}
-
-.ringFill {
-  fill: none;
-  stroke: var(--color-accent);
-  stroke-width: 12;
-  stroke-linecap: round;
-  animation: ringGrow 1.2s cubic-bezier(0.22, 1, 0.36, 1) forwards;
-}
-
-@keyframes ringGrow {
-  from { stroke-dashoffset: 452.4; }
-  to   { stroke-dashoffset: var(--dash-offset); }
-}
-
-.ringLabel {
-  position: absolute;
-  inset: 0;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  pointer-events: none;
-}
-
-.ringCount {
-  font-family: var(--font-heading);
-  font-size: 44px;
-  font-weight: 800;
-  color: var(--color-text);
-  letter-spacing: -0.03em;
-  line-height: 1;
-}
-
-.ringTotal {
+.rank {
   font-family: var(--font-mono);
-  font-size: 13px;
-  font-weight: 500;
+  font-size: 11px;
+  font-weight: 600;
   color: var(--color-text-secondary);
-  margin-top: 3px;
-}
-
-.ringCaption {
-  font-family: var(--font-mono);
-  font-size: 10px;
-  font-weight: 400;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-  color: var(--color-text-secondary);
-  margin-top: 8px;
-}
-
-/* Complete banner */
-
-.completeBanner {
-  width: 100%;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 6px;
-  background: var(--color-stat-bg);
-  border: 1.5px solid var(--color-correct-border);
-  border-radius: 14px;
-  padding: 20px 24px;
-  margin-bottom: 20px;
-  text-align: center;
-}
-
-.completeTitle {
-  font-family: var(--font-heading);
-  font-size: 22px;
-  font-weight: 800;
-  color: var(--color-correct-border);
-  letter-spacing: -0.02em;
-}
-
-.completeSub {
-  font-family: var(--font-mono);
-  font-size: 12px;
-  color: var(--color-text-secondary);
-  margin-bottom: 8px;
-}
-
-.resetBtn {
-  font-family: var(--font-heading);
-  font-size: 14px;
-  font-weight: 700;
-  color: var(--color-text-secondary);
-  background: transparent;
-  border: 1.5px solid var(--color-stat-border);
-  border-radius: 8px;
-  padding: 7px 18px;
-  cursor: pointer;
-  transition: border-color 0.15s, color 0.15s;
-}
-
-.resetBtn:hover {
-  border-color: var(--color-wrong-border);
-  color: var(--color-wrong-border);
-}
-
-/* Sections */
-
-.section {
-  width: 100%;
-  margin-top: 8px;
-  margin-bottom: 16px;
-}
-
-.sectionTitle {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  font-family: var(--font-mono);
-  font-size: 10px;
-  font-weight: 700;
-  letter-spacing: 0.16em;
-  text-transform: uppercase;
-  color: var(--color-text-secondary);
-  margin-bottom: 10px;
-}
-
-.sectionCount {
-  background: var(--color-progress-track);
-  border-radius: 20px;
-  padding: 1px 7px;
-  font-size: 10px;
-  letter-spacing: 0.04em;
-}
-
-/* Rows */
-
-.list {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-}
-
-.row {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  background: var(--color-stat-bg);
-  border: 1.5px solid var(--color-stat-border);
-  border-radius: 10px;
-  padding: 8px 12px;
-}
-
-.rowUnseen {
-  opacity: 0.5;
-}
-
-.flag {
-  width: 36px;
-  height: 24px;
-  object-fit: contain;
-  border-radius: 3px;
+  width: 28px;
   flex-shrink: 0;
 }
 
-.countryName {
-  flex: 1;
-  min-width: 0;
+.runName {
   font-family: var(--font-heading);
-  font-size: 13px;
+  font-size: 14px;
   font-weight: 700;
   color: var(--color-text);
   white-space: nowrap;
@@ -237,21 +58,21 @@
   text-overflow: ellipsis;
 }
 
-/* Result indicators */
+.runScore {
+  font-family: var(--font-heading);
+  font-size: 15px;
+  font-weight: 800;
+  color: var(--color-text);
+}
 
-.indicator {
+.runTime {
   font-family: var(--font-mono);
-  font-size: 17px;
-  font-weight: 700;
-  flex-shrink: 0;
-  width: 20px;
-  text-align: center;
+  font-size: 11px;
+  color: var(--color-text-secondary);
 }
 
-.indicatorCorrect {
-  color: var(--color-correct-border);
-}
-
-.indicatorWrong {
-  color: var(--color-wrong-border);
+.actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 28px;
 }

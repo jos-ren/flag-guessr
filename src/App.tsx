@@ -13,12 +13,10 @@ export default function RootLayout() {
   useEffect(() => {
     if (pathname === '/') {
       setRandomFlagFavicon();
-    } else if (game.stumpedBy) {
-      setFlagFavicon(game.stumpedBy.code);
     } else if (game.current) {
       setFlagFavicon(game.current.code);
     }
-  }, [pathname, game.stumpedBy, game.current]);
+  }, [pathname, game.current]);
 
   return (
     <div className={styles.root}>

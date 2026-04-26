@@ -1,8 +1,9 @@
-import type { Country, GuessRecord } from '@/types';
+import type { Country, GuessRecord, RunRecord } from '@/types';
+import { loadRuns } from '@/stats';
 import FlagCard from '@/components/FlagCard';
 import ActionButton from '@/components/ActionButton';
 import { assetUrl } from '@/utils';
-import styles from './GameOverScreen.module.css';
+import styles from './ResultsScreen.module.css';
 
 function recapFlagSrc(country: Country): string {
   if (!country.imageUrl && !country.code.includes('-')) {
@@ -11,28 +12,55 @@ function recapFlagSrc(country: Country): string {
   return assetUrl(country.imageUrl ?? `https://flagcdn.com/w80/${country.code}.png`);
 }
 
+function formatTime(s: number): string {
+  return `${Math.floor(s / 60)}:${String(s % 60).padStart(2, '0')}`;
+}
+
+function sortRuns(runs: RunRecord[]): RunRecord[] {
+  return [...runs].sort((a, b) => b.correctCount - a.correctCount || a.elapsedSeconds - b.elapsedSeconds);
+}
+
 interface Props {
-  finalStreak: number;
-  highScore: number;
-  isNewHigh: boolean;
-  stumpedBy: Country | null;
   guessHistory: GuessRecord[];
+  total: number;
+  elapsedSeconds: number;
+  isGameOver: boolean;
+  modeId: string;
   onPlayAgain: () => void;
   onHome: () => void;
   onLeaderboard: () => void;
 }
 
-export default function GameOverScreen({
-  finalStreak, highScore, isNewHigh, stumpedBy, guessHistory, onPlayAgain, onHome, onLeaderboard,
+export default function ResultsScreen({
+  guessHistory, total, elapsedSeconds, isGameOver, modeId, onPlayAgain, onHome, onLeaderboard,
 }: Props) {
+  const correctCount = guessHistory.filter(r => r.correct).length;
+
+  const stumpedBy = isGameOver
+    ? ([...guessHistory].reverse().find(r => !r.correct)?.country ?? null)
+    : null;
+
+  const runs = loadRuns(modeId);
+  const sorted = sortRuns(runs);
+  const mostRecent = runs.length > 0 ? [...runs].sort((a, b) => b.timestamp - a.timestamp)[0]! : null;
+  const rank = mostRecent ? sorted.findIndex(r => r.id === mostRecent.id) + 1 : null;
+  const isNewBest = rank === 1;
+
   return (
     <div className={`${styles.enter} ${styles.container}`}>
 
       <div className={styles.hero}>
-        <div className={styles.heroScore}>{finalStreak}</div>
-        <div className={styles.heroLabel}>This run</div>
+        <div className={styles.heroScoreRow}>
+          <span className={styles.heroScore}>{correctCount}</span>
+          <span className={styles.heroTotal}>/ {total}</span>
+        </div>
+        <div className={styles.heroTime}>{formatTime(elapsedSeconds)}</div>
         <div className={styles.heroBest}>
-          {isNewHigh ? '✦ new best!' : `Best ever: ${highScore}`}
+          {isNewBest
+            ? '✦ new best!'
+            : rank !== null
+              ? `#${rank} on leaderboard`
+              : null}
         </div>
       </div>
 
