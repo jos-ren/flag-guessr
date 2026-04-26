@@ -3,4 +3,5 @@ export interface Country {
   name: string;
   emoji: string;
   imageUrl?: string;
+  continent?: number;
 }

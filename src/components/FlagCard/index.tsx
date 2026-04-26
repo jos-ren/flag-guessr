@@ -1,4 +1,5 @@
 import { useState, type CSSProperties } from 'react';
+import { assetUrl } from '@/utils';
 import styles from './FlagCard.module.css';
 
 interface Props {
@@ -39,9 +40,10 @@ export default function FlagCard({ code, alt, imageUrl, animated, isLeaving, img
     <div className={styles.outer}>
       <div className={cardClass} style={cardStyle}>
         <img
-          src={imageUrl ?? `https://flagcdn.com/w640/${code}.png`}
+          src={assetUrl(imageUrl ?? `https://flagcdn.com/w640/${code}.png`)}
           alt={alt}
           draggable={false}
+          referrerPolicy="no-referrer"
           onLoad={handleLoad}
           className={imageClass}
         />

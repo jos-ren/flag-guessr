@@ -1,7 +1,9 @@
-import type { Country } from '@/types';
+import type { Country, GuessRecord } from '@/types';
 import FlagCard from '@/components/FlagCard';
 import OptionButton from '@/components/OptionButton';
 import type { OptionState } from '@/components/OptionButton';
+import AutofillInput from '@/components/AutofillInput';
+import GuessTrail from '@/components/GuessTrail';
 import styles from './GameScreen.module.css';
 
 interface Props {
@@ -15,6 +17,9 @@ interface Props {
   isLeaving: boolean;
   onSelect: (country: Country) => void;
   onImgLoad: () => void;
+  answerMode: 'multiple-choice' | 'text-input';
+  pool: Country[];
+  guessHistory: GuessRecord[];
 }
 
 function getOptionState(country: Country, current: Country, selected: Country | null): OptionState {
@@ -26,16 +31,14 @@ function getOptionState(country: Country, current: Country, selected: Country | 
 
 export default function GameScreen({
   current, streak, isRecord, options, selected, animKey,
-  imgLoaded, isLeaving, onSelect, onImgLoad,
+  imgLoaded, isLeaving, onSelect, onImgLoad, answerMode, pool, guessHistory,
 }: Props) {
   return (
     <div className={styles.container}>
 
-      {streak > 0 && (
-        <div className={`${styles.streakLabel}${isRecord ? ` ${styles.streakLabelRecord}` : ''}`}>
-          {streak}
-        </div>
-      )}
+      <div className={`${styles.streakLabel}${isRecord ? ` ${styles.streakLabelRecord}` : ''}`}>
+        {streak}
+      </div>
 
       <div className={styles.flagWrap}>
         <FlagCard
@@ -51,24 +54,38 @@ export default function GameScreen({
       </div>
 
       <div className={`${styles.prompt}${isLeaving ? ` ${styles.promptLeaving}` : ''}`}>
-        Which country is this?
+        {answerMode === 'text-input' ? 'Which team is this?' : 'Which country is this?'}
       </div>
 
-      <div
-        key={`opts-${animKey}`}
-        className={`${styles.optionsGrid}${isLeaving ? ` ${styles.optionsGridLeaving}` : ''}`}
-      >
-        {options.map((country, i) => (
-          <OptionButton
-            key={country.code}
-            country={country}
-            state={getOptionState(country, current, selected)}
-            enterDelay={!selected ? i * 0.06 : undefined}
-            onClick={() => onSelect(country)}
-            disabled={selected != null}
-          />
-        ))}
-      </div>
+      {answerMode === 'text-input' ? (
+        <AutofillInput
+          key={`opts-${animKey}`}
+          pool={pool}
+          correct={current}
+          selected={selected}
+          onSelect={onSelect}
+          isLeaving={isLeaving}
+        />
+      ) : (
+        <div
+          key={`opts-${animKey}`}
+          className={`${styles.optionsGrid}${isLeaving ? ` ${styles.optionsGridLeaving}` : ''}`}
+        >
+          {options.map((country, i) => (
+            <OptionButton
+              key={country.code}
+              country={country}
+              state={getOptionState(country, current, selected)}
+              enterDelay={!selected ? i * 0.06 : undefined}
+              onClick={() => onSelect(country)}
+              disabled={selected != null}
+            />
+          ))}
+        </div>
+      )}
+
+      <GuessTrail guessHistory={guessHistory} />
+
     </div>
   );
 }

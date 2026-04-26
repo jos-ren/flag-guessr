@@ -5,11 +5,12 @@ export interface ResultMessage {
   sub: string;
 }
 
-export type Phase = 'idle' | 'active' | 'answered' | 'leaving' | 'gameover';
+export type Phase = 'idle' | 'active' | 'answered' | 'leaving' | 'gameover' | 'quizcomplete';
 
 export interface GuessRecord {
   country: Country;
   correct: boolean;
+  selected?: Country;
 }
 
 export interface StatEntry {
@@ -18,6 +19,8 @@ export interface StatEntry {
   correct: boolean;
 }
 
+export type GameModeSection = 'world' | 'subdivisions' | 'general' | 'sports';
+
 export interface GameMode {
   id: string;
   title: string;
@@ -25,4 +28,6 @@ export interface GameMode {
   flagCode: string;
   flagImageUrl?: string;
   available: boolean;
+  section: GameModeSection;
+  answerMode?: 'text-input';
 }

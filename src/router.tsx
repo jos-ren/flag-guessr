@@ -4,8 +4,9 @@ import RootLayout from './App';
 import HomeScreen from '@/pages/HomeScreen';
 import GameScreen from '@/pages/GameScreen';
 import GameOverScreen from '@/pages/GameOverScreen';
-import StatsScreen from '@/pages/StatsScreen';
+import LeaderboardScreen from '@/pages/LeaderboardScreen';
 import { useGameContext } from '@/context';
+import { markCompleted } from '@/stats';
 
 const rootRoute = createRootRoute({ component: RootLayout });
 
@@ -46,7 +47,14 @@ const playRoute = createRoute({
       }
     }, [game.phase, navigate]);
 
-    if (!game.current) return null;
+    useEffect(() => {
+      if (game.phase === 'quizcomplete') {
+        markCompleted(game.statsKey);
+        void navigate({ to: '/leaderboard/$modeId', params: { modeId: game.currentMode } });
+      }
+    }, [game.phase, navigate, game.statsKey, game.currentMode]);
+
+    if (!game.current || game.isQuizComplete) return null;
 
     return (
       <GameScreen
@@ -60,6 +68,9 @@ const playRoute = createRoute({
         isLeaving={game.isLeaving}
         onSelect={game.handleSelect}
         onImgLoad={() => game.setImgLoaded(true)}
+        answerMode={game.answerMode}
+        pool={game.pool}
+        guessHistory={game.guessHistory}
       />
     );
   },
@@ -91,21 +102,24 @@ const gameOverRoute = createRoute({
         onHome={() => {
           void navigate({ to: '/' });
         }}
+        onLeaderboard={() => {
+          void navigate({ to: '/leaderboard/$modeId', params: { modeId: game.currentMode } });
+        }}
       />
     );
   },
 });
 
-const statsRoute = createRoute({
+const leaderboardRoute = createRoute({
   getParentRoute: () => rootRoute,
-  path: '/stats/$modeId',
-  component: function StatsRoute() {
-    const { modeId } = statsRoute.useParams();
-    return <StatsScreen mode={modeId} />;
+  path: '/leaderboard/$modeId',
+  component: function LeaderboardRoute() {
+    const { modeId } = leaderboardRoute.useParams();
+    return <LeaderboardScreen mode={modeId} />;
   },
 });
 
-const routeTree = rootRoute.addChildren([indexRoute, playRoute, gameOverRoute, statsRoute]);
+const routeTree = rootRoute.addChildren([indexRoute, playRoute, gameOverRoute, leaderboardRoute]);
 
 export const router = createRouter({
   routeTree,

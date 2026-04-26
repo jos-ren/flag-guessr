@@ -1,6 +1,7 @@
 import type { Country, GuessRecord } from '@/types';
 import FlagCard from '@/components/FlagCard';
 import ActionButton from '@/components/ActionButton';
+import { assetUrl } from '@/utils';
 import styles from './GameOverScreen.module.css';
 
 interface Props {
@@ -11,10 +12,11 @@ interface Props {
   guessHistory: GuessRecord[];
   onPlayAgain: () => void;
   onHome: () => void;
+  onLeaderboard: () => void;
 }
 
 export default function GameOverScreen({
-  finalStreak, highScore, isNewHigh, stumpedBy, guessHistory, onPlayAgain, onHome,
+  finalStreak, highScore, isNewHigh, stumpedBy, guessHistory, onPlayAgain, onHome, onLeaderboard,
 }: Props) {
   return (
     <div className={`${styles.enter} ${styles.container}`}>
@@ -37,15 +39,7 @@ export default function GameOverScreen({
         </div>
       )}
 
-      <div className={styles.buttonRow}>
-        <ActionButton
-          bg="var(--color-btn-bg)"
-          color="var(--color-btn-text)"
-          border="1.5px solid var(--color-stat-border)"
-          onClick={onHome}
-        >
-          All Games
-        </ActionButton>
+      <div className={styles.buttons}>
         <ActionButton
           bg="var(--color-accent)"
           color="var(--color-accent-text)"
@@ -54,22 +48,43 @@ export default function GameOverScreen({
         >
           Try Again
         </ActionButton>
+        <div className={styles.secondaryRow}>
+          <ActionButton
+            bg="var(--color-btn-bg)"
+            color="var(--color-btn-text)"
+            border="1.5px solid var(--color-stat-border)"
+            onClick={onHome}
+          >
+            All Games
+          </ActionButton>
+          <ActionButton
+            bg="var(--color-btn-bg)"
+            color="var(--color-btn-text)"
+            border="1.5px solid var(--color-stat-border)"
+            onClick={onLeaderboard}
+          >
+            Leaderboard
+          </ActionButton>
+        </div>
       </div>
 
       <div className={styles.history}>
-        <div className={styles.historyTitle}>This round</div>
+        <div className={styles.historyTitle}>Recap</div>
         {guessHistory.length === 0 ? (
           <div className={styles.historyEmpty}>No flags guessed yet</div>
         ) : (
           <div className={styles.historyGrid}>
-            {[...guessHistory].reverse().map(({ country, correct }, i) => (
+            {[...guessHistory].reverse().map(({ country, correct, selected }, i) => (
               <div key={i} className={styles.historyItem}>
                 <img
-                  src={country.imageUrl ?? `https://flagcdn.com/w80/${country.code}.png`}
+                  src={assetUrl(country.imageUrl ?? `https://flagcdn.com/w80/${country.code}.png`)}
                   alt={country.name}
                   className={styles.historyFlag}
                 />
                 <span className={styles.historyName}>{country.name}</span>
+                {!correct && selected && (
+                  <span className={styles.wrongGuess}>{selected.name}</span>
+                )}
                 <span className={`${styles.historyIndicator}${correct ? ` ${styles.correct}` : ` ${styles.wrong}`}`}>
                   {correct ? '✓' : '✗'}
                 </span>

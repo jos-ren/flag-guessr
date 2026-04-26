@@ -1,0 +1,123 @@
+.wrapper {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  animation: ansEnter 0.38s cubic-bezier(0.2, 0, 0.3, 1) both;
+  opacity: 1;
+  transform: translateY(0);
+  transition: opacity 0.22s ease, transform 0.22s ease;
+}
+
+.leaving {
+  opacity: 0;
+  transform: translateY(6px);
+}
+
+.input {
+  background: var(--color-btn-bg);
+  border: 1.5px solid var(--color-btn-border);
+  border-radius: 12px;
+  padding: 16px 12px;
+  color: var(--color-btn-text);
+  font-size: 15px;
+  font-family: var(--font-heading);
+  font-weight: 700;
+  width: 100%;
+  box-sizing: border-box;
+  outline: none;
+  transition: border-color 0.15s, background 0.15s, color 0.15s;
+}
+
+.input::placeholder {
+  color: var(--color-text-secondary);
+  font-weight: 600;
+  font-style: italic;
+}
+
+.input:focus:not(:disabled) {
+  border-color: var(--color-btn-hover-border);
+  background: var(--color-btn-hover-bg);
+}
+
+.wrapper.correct .input {
+  background: var(--color-correct-bg) !important;
+  border-color: var(--color-correct-border) !important;
+  color: var(--color-correct-text) !important;
+  animation: correctPop 0.4s cubic-bezier(0.3, 1.4, 0.5, 1) forwards;
+}
+
+.wrapper.wrong .input {
+  background: var(--color-wrong-bg) !important;
+  border-color: var(--color-wrong-border) !important;
+  color: var(--color-wrong-text) !important;
+  animation: shake 0.4s ease forwards;
+}
+
+.dropdown {
+  position: absolute;
+  top: calc(100% + 4px);
+  left: 0;
+  right: 0;
+  background: var(--color-btn-bg);
+  border: 1.5px solid var(--color-btn-border);
+  border-radius: 12px;
+  overflow: hidden;
+  z-index: 10;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+}
+
+.suggestion {
+  display: block;
+  width: 100%;
+  padding: 12px 14px;
+  background: none;
+  border: none;
+  border-bottom: 1px solid var(--color-btn-border);
+  text-align: left;
+  font-size: 15px;
+  font-family: var(--font-heading);
+  font-weight: 700;
+  color: var(--color-btn-text);
+  cursor: pointer;
+  transition: background 0.1s;
+}
+
+.suggestion:last-child {
+  border-bottom: none;
+}
+
+.suggestion:hover,
+.suggestionActive {
+  background: var(--color-btn-hover-bg);
+}
+
+.revealRow {
+  margin-top: 10px;
+  padding: 14px 12px;
+  background: var(--color-reveal-bg);
+  border: 1.5px solid var(--color-correct-border);
+  border-radius: 12px;
+  font-size: 15px;
+  font-family: var(--font-heading);
+  font-weight: 700;
+  color: var(--color-correct-text);
+  text-align: center;
+  opacity: 0.75;
+}
+
+@keyframes ansEnter {
+  from { opacity: 0; transform: translateY(14px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes correctPop {
+  0%   { transform: scale(1); }
+  50%  { transform: scale(1.05); }
+  100% { transform: scale(1); }
+}
+
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  20%, 60%  { transform: translateX(-7px); }
+  40%, 80%  { transform: translateX(7px); }
+}

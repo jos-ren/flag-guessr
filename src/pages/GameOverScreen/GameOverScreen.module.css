@@ -94,18 +94,17 @@
 }
 
 /* ── Buttons ── */
-.buttonRow {
+.buttons {
   display: flex;
   flex-direction: column;
   gap: 8px;
   width: 100%;
 }
 
-@media (min-width: 400px) {
-  .buttonRow {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-  }
+.secondaryRow {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
 }
 
 /* ── Round history ── */
@@ -160,6 +159,17 @@
   font-size: 13px;
   font-weight: 700;
   color: var(--color-text);
+}
+
+.wrongGuess {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--color-wrong-text);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 120px;
 }
 
 .historyIndicator {

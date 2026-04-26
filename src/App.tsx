@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { Fragment, useEffect, useRef, useState } from 'react';
 import { Outlet, useNavigate, useRouterState } from '@tanstack/react-router';
 import { useGameContext } from '@/context';
 import Footer from '@/components/Footer';
@@ -45,27 +45,31 @@ export default function RootLayout() {
           Flag Guessr
         </button>
 
-        <div className={styles.statsWrap} ref={dropdownRef}>
+        <div className={styles.leaderboardWrap} ref={dropdownRef}>
           <button
-            className={`${styles.statsButton}${dropdownOpen ? ` ${styles.statsButtonActive}` : ''}`}
+            className={`${styles.leaderboardButton}${dropdownOpen ? ` ${styles.leaderboardButtonActive}` : ''}`}
             onClick={() => setDropdownOpen(o => !o)}
           >
-            Stats
+            Leaderboard
           </button>
 
           {dropdownOpen && (
             <div className={styles.dropdown}>
-              {AVAILABLE_MODES.map(mode => (
-                <button
-                  key={mode.id}
-                  className={styles.dropdownItem}
-                  onClick={() => {
-                    setDropdownOpen(false);
-                    void navigate({ to: '/stats/$modeId', params: { modeId: mode.id } });
-                  }}
-                >
-                  {mode.title}
-                </button>
+              {AVAILABLE_MODES.map((mode, i) => (
+                <Fragment key={mode.id}>
+                  {i > 0 && AVAILABLE_MODES[i - 1]?.section !== mode.section && (
+                    <div className={styles.dropdownDivider} />
+                  )}
+                  <button
+                    className={styles.dropdownItem}
+                    onClick={() => {
+                      setDropdownOpen(false);
+                      void navigate({ to: '/leaderboard/$modeId', params: { modeId: mode.id } });
+                    }}
+                  >
+                    {mode.title}
+                  </button>
+                </Fragment>
               ))}
             </div>
           )}
