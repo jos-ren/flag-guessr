@@ -11,7 +11,10 @@
     "deploy": "npm run build && cp dist/index.html dist/404.html && npx gh-pages -d dist"
   },
   "dependencies": {
+    "@fortawesome/fontawesome-svg-core": "^7.2.0",
+    "@fortawesome/free-regular-svg-icons": "^7.2.0",
     "@fortawesome/free-solid-svg-icons": "^7.2.0",
+    "@fortawesome/react-fontawesome": "^3.3.1",
     "@tanstack/react-router": "^1.168.24",
     "react": "^19.2.5",
     "react-dom": "^19.2.5"

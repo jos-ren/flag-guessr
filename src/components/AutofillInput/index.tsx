@@ -29,18 +29,21 @@ export default function AutofillInput({ pool, correct, selected, onSelect, isLea
   const [activeIndex, setActiveIndex] = useState(-1);
   const [isOpen, setIsOpen] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
+  const wrapperRef = useRef<HTMLDivElement>(null);
 
   const disabled = selected !== null;
   const isCorrect = selected !== null && selected.code === correct.code;
   const isWrong = selected !== null && selected.code !== correct.code;
 
   const select = useCallback((country: Country) => {
-    setQuery(country.name);
+    const isCorrect = country.code === correct.code;
+    setQuery(isCorrect ? country.name : '');
+    setSuggestions([]);
     setIsOpen(false);
     setActiveIndex(-1);
-    setSuggestions([]);
+    if (!isCorrect) inputRef.current?.focus();
     onSelect(country);
-  }, [onSelect]);
+  }, [onSelect, correct]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const val = e.target.value;
@@ -62,7 +65,7 @@ export default function AutofillInput({ pool, correct, selected, onSelect, isLea
       e.preventDefault();
       if (activeIndex >= 0 && suggestions[activeIndex]) {
         select(suggestions[activeIndex]!);
-      } else if (suggestions.length === 1 && suggestions[0]) {
+      } else if (suggestions.length > 0 && suggestions[0]) {
         select(suggestions[0]);
       }
     } else if (e.key === 'Escape') {
@@ -73,14 +76,15 @@ export default function AutofillInput({ pool, correct, selected, onSelect, isLea
     }
   };
 
-  const handleBlur = () => {
-    setTimeout(() => setIsOpen(false), 0);
+  const handleBlur = (e: React.FocusEvent) => {
+    if (wrapperRef.current && wrapperRef.current.contains(e.relatedTarget as Node)) return;
+    setIsOpen(false);
   };
 
   const wrapperClass = `${styles.wrapper}${isCorrect ? ` ${styles.correct}` : ''}${isWrong ? ` ${styles.wrong}` : ''}${isLeaving ? ` ${styles.leaving}` : ''}`;
 
   return (
-    <div className={wrapperClass}>
+    <div className={wrapperClass} ref={wrapperRef}>
       <input
         ref={inputRef}
         className={styles.input}
@@ -89,6 +93,7 @@ export default function AutofillInput({ pool, correct, selected, onSelect, isLea
         onChange={handleChange}
         onKeyDown={handleKeyDown}
         onBlur={handleBlur}
+        onFocus={() => setActiveIndex(-1)}
         disabled={disabled}
         placeholder="Type a team name..."
         autoComplete="off"
@@ -102,7 +107,19 @@ export default function AutofillInput({ pool, correct, selected, onSelect, isLea
               key={c.code}
               className={`${styles.suggestion}${i === activeIndex ? ` ${styles.suggestionActive}` : ''}`}
               onMouseDown={(e) => { e.preventDefault(); select(c); }}
-              tabIndex={-1}
+              onFocus={() => setActiveIndex(i)}
+              onBlur={handleBlur}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter') { e.preventDefault(); select(c); }
+                else if (e.key === 'Escape') {
+                  setIsOpen(false);
+                  setQuery('');
+                  setSuggestions([]);
+                  setActiveIndex(-1);
+                  inputRef.current?.focus();
+                }
+              }}
+              tabIndex={0}
             >
               {c.name}
             </button>

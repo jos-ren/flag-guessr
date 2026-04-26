@@ -71,6 +71,10 @@ const playRoute = createRoute({
         answerMode={game.answerMode}
         pool={game.pool}
         guessHistory={game.guessHistory}
+        lives={game.lives}
+        maxLives={game.maxLives}
+        elapsedSeconds={game.elapsedSeconds}
+        eliminatedOptions={game.eliminatedOptions}
       />
     );
   },

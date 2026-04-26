@@ -40,10 +40,6 @@
   color: var(--color-text);
 }
 
-.leaderboardWrap {
-  position: relative;
-}
-
 .leaderboardButton {
   background: none;
   border: none;
@@ -58,49 +54,8 @@
   transition: color 0.15s;
 }
 
-.leaderboardButton:hover,
-.leaderboardButtonActive {
+.leaderboardButton:hover {
   color: var(--color-text);
-}
-
-.dropdown {
-  position: absolute;
-  top: calc(100% + 10px);
-  right: 0;
-  min-width: 200px;
-  background: var(--color-btn-bg);
-  border: 1.5px solid var(--color-btn-border);
-  border-radius: 12px;
-  padding: 6px;
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-  box-shadow: var(--shadow-flag);
-}
-
-.dropdownItem {
-  background: none;
-  border: none;
-  border-radius: 8px;
-  padding: 9px 12px;
-  text-align: left;
-  cursor: pointer;
-  font-family: var(--font-heading);
-  font-size: 13px;
-  font-weight: 600;
-  color: var(--color-text);
-  transition: background 0.12s;
-  white-space: nowrap;
-}
-
-.dropdownItem:hover {
-  background: var(--color-btn-border);
-}
-
-.dropdownDivider {
-  height: 1px;
-  background: var(--color-btn-border);
-  margin: 4px 2px;
 }
 
 .main {

@@ -13,6 +13,8 @@ import MLB_TEAMS from '@/data/mlb-teams.json';
 import NFL_TEAMS from '@/data/nfl-teams.json';
 import CAPITALS from '@/data/capitals.json';
 
+const MAX_LIVES = 3;
+
 interface UseGameReturn {
   current: Country | null;
   options: Country[];
@@ -36,6 +38,10 @@ interface UseGameReturn {
   statsKey: string;
   pool: Country[];
   answerMode: 'multiple-choice' | 'text-input';
+  lives: number;
+  maxLives: number;
+  elapsedSeconds: number;
+  eliminatedOptions: string[];
 }
 
 const ALL_COUNTRIES = COUNTRIES as Country[];
@@ -117,6 +123,9 @@ export function useGame(): UseGameReturn {
   const [highScore, setHighScore] = useState(() => parseInt(localStorage.getItem(HS_KEY) ?? '0', 10));
   const [isNewHigh, setIsNewHigh] = useState(false);
   const [phase, setPhase] = useState<Phase>('idle');
+  const [lives, setLives] = useState(MAX_LIVES);
+  const [eliminatedOptions, setEliminatedOptions] = useState<string[]>([]);
+  const [elapsedSeconds, setElapsedSeconds] = useState(0);
   const [animKey, setAnimKey] = useState(0);
   const [imgLoaded, setImgLoaded] = useState(false);
   const [, setStats] = useState<StatsMap>(loadStats);
@@ -130,13 +139,11 @@ export function useGame(): UseGameReturn {
 
   const dealNext = useCallback(() => {
     const pool = getPool(currentModeRef.current);
-    if (deckRef.current.length === 0) {
-      deckRef.current = shuffle([...pool]);
-    }
     const country = deckRef.current.shift()!;
     setCurrent(country);
     setOptions(getOptions(country, pool));
     setSelected(null);
+    setEliminatedOptions([]);
     setImgLoaded(false);
     setAnimKey(k => k + 1);
   }, []);
@@ -156,6 +163,9 @@ export function useGame(): UseGameReturn {
     setStumpedBy(null);
     setIsNewHigh(false);
     setGuessHistory([]);
+    setLives(MAX_LIVES);
+    setEliminatedOptions([]);
+    setElapsedSeconds(0);
     setPhase('active');
     const country = deckRef.current.shift()!;
     setCurrent(country);
@@ -166,38 +176,60 @@ export function useGame(): UseGameReturn {
   }, []);
 
   const handleSelect = useCallback((country: Country) => {
-    if (selected || phase !== 'active' || !current) return;
-    setSelected(country);
-    setPhase('answered');
+    if (phase !== 'active' || !current) return;
+    if (eliminatedOptions.includes(country.code)) return;
+
     const isCorrect = country.code === current.code;
-
     setStats(prev => recordAnswer(prev, current.code, isCorrect, statsKeyRef.current));
-    setGuessHistory(prev => [...prev, { country: current, correct: isCorrect, selected: isCorrect ? undefined : country }]);
 
-    if (isCorrect) {
-      setStreak(s => s + 1);
-      timerRef.current = setTimeout(() => {
-        setPhase('leaving');
-        setTimeout(() => {
+    const advance = () => {
+      setPhase('leaving');
+      setTimeout(() => {
+        if (deckRef.current.length === 0) {
+          setPhase('quizcomplete');
+        } else {
           dealNext();
           setPhase('active');
-        }, 320);
-      }, 1100);
+        }
+      }, 320);
+    };
+
+    if (isCorrect) {
+      setSelected(country);
+      setPhase('answered');
+      setGuessHistory(prev => [...prev, { country: current, correct: true }]);
+      setStreak(s => s + 1);
+      timerRef.current = setTimeout(advance, 1100);
     } else {
-      setStumpedBy(current);
-      setFinalStreak(streak);
-      if (streak > highScore) {
-        localStorage.setItem(hsKeyRef.current, String(streak));
-        setHighScore(streak);
-        setIsNewHigh(true);
+      const newLives = lives - 1;
+      setLives(newLives);
+      if (newLives <= 0) {
+        setSelected(country);
+        setPhase('answered');
+        setStumpedBy(current);
+        setGuessHistory(prev => [...prev, { country: current, correct: false, selected: country }]);
+        setFinalStreak(streak);
+        if (streak > highScore) {
+          localStorage.setItem(hsKeyRef.current, String(streak));
+          setHighScore(streak);
+          setIsNewHigh(true);
+        }
+        timerRef.current = setTimeout(() => setPhase('gameover'), 1400);
+      } else {
+        setEliminatedOptions(prev => [...prev, country.code]);
+        setGuessHistory(prev => [...prev, { country: current, correct: false, selected: country }]);
       }
-      timerRef.current = setTimeout(() => {
-        setPhase('gameover');
-      }, 1400);
     }
-  }, [selected, phase, current, streak, highScore, dealNext]);
+  }, [phase, current, streak, highScore, lives, eliminatedOptions, dealNext]);
 
   useEffect(() => () => { if (timerRef.current) clearTimeout(timerRef.current); }, []);
+
+  useEffect(() => {
+    const running = phase === 'active' || phase === 'answered' || phase === 'leaving';
+    if (!running) return;
+    const id = setInterval(() => setElapsedSeconds(s => s + 1), 1000);
+    return () => clearInterval(id);
+  }, [phase]);
 
   const currentModeConfig = GAME_MODES.find(m => m.id === currentMode);
 
@@ -224,5 +256,9 @@ export function useGame(): UseGameReturn {
     statsKey: statsKeyRef.current,
     pool: getPool(currentMode),
     answerMode: currentModeConfig?.answerMode === 'text-input' ? 'text-input' : 'multiple-choice',
+    lives,
+    maxLives: MAX_LIVES,
+    elapsedSeconds,
+    eliminatedOptions,
   };
 }

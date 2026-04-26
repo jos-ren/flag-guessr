@@ -4,6 +4,13 @@ import ActionButton from '@/components/ActionButton';
 import { assetUrl } from '@/utils';
 import styles from './GameOverScreen.module.css';
 
+function recapFlagSrc(country: Country): string {
+  if (!country.imageUrl && !country.code.includes('-')) {
+    return `https://hatscripts.github.io/circle-flags/flags/${country.code.toLowerCase()}.svg`;
+  }
+  return assetUrl(country.imageUrl ?? `https://flagcdn.com/w80/${country.code}.png`);
+}
+
 interface Props {
   finalStreak: number;
   highScore: number;
@@ -31,7 +38,7 @@ export default function GameOverScreen({
 
       {stumpedBy && (
         <div className={styles.stumpedSection}>
-          <div className={styles.stumpedTag}>ended your streak</div>
+          <div className={styles.stumpedTag}>used your last life</div>
           <div className={styles.flagWrap}>
             <FlagCard code={stumpedBy.code} imageUrl={stumpedBy.imageUrl} alt={stumpedBy.name} ring="error" />
           </div>
@@ -77,7 +84,7 @@ export default function GameOverScreen({
             {[...guessHistory].reverse().map(({ country, correct, selected }, i) => (
               <div key={i} className={styles.historyItem}>
                 <img
-                  src={assetUrl(country.imageUrl ?? `https://flagcdn.com/w80/${country.code}.png`)}
+                  src={recapFlagSrc(country)}
                   alt={country.name}
                   className={styles.historyFlag}
                 />

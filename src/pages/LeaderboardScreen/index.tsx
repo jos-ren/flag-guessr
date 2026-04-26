@@ -1,8 +1,11 @@
 import { useState, useMemo, type CSSProperties } from 'react';
+import { useNavigate } from '@tanstack/react-router';
 import type { Country } from '@/types';
 import { loadStats, resetStats, COUNTRY_STATS_KEY, STATE_STATS_KEY, PROVINCE_STATS_KEY, AFRICA_STATS_KEY, NORTH_AMERICA_STATS_KEY, SOUTH_AMERICA_STATS_KEY, ASIA_STATS_KEY, EUROPE_STATS_KEY, OCEANIA_STATS_KEY, ONE_PIECE_STATS_KEY, NBA_STATS_KEY, NHL_STATS_KEY, MLB_STATS_KEY, NFL_STATS_KEY, CAPITALS_STATS_KEY } from '@/stats';
-import { CONTINENTS } from '@/constants';
+import { CONTINENTS, GAME_MODES } from '@/constants';
 import { assetUrl } from '@/utils';
+
+const AVAILABLE_MODES = GAME_MODES.filter(m => m.available);
 import countriesJson from '@/data/countries.json';
 import statesJson from '@/data/us-states.json';
 import provincesJson from '@/data/canada-provinces.json';
@@ -50,6 +53,7 @@ interface Props {
 }
 
 export default function LeaderboardScreen({ mode }: Props) {
+  const navigate = useNavigate();
   const { items: allItems, statsKey } = getModeItems(mode);
   const TOTAL = allItems.length;
   const [resetKey, setResetKey] = useState(0);
@@ -84,7 +88,26 @@ export default function LeaderboardScreen({ mode }: Props) {
 
   return (
     <div className={styles.container}>
-      <h1 className={styles.heading}>Leaderboard</h1>
+      <div className={styles.headingRow}>
+        <select
+          className={styles.modeSelect}
+          value={mode}
+          onChange={e => void navigate({ to: '/leaderboard/$modeId', params: { modeId: e.target.value } })}
+        >
+          {(['world', 'subdivisions', 'sports', 'general'] as const).map(section => {
+            const modes = AVAILABLE_MODES.filter(m => m.section === section);
+            if (modes.length === 0) return null;
+            const label = section.charAt(0).toUpperCase() + section.slice(1);
+            return (
+              <optgroup key={section} label={label}>
+                {modes.map(m => (
+                  <option key={m.id} value={m.id}>{m.title}</option>
+                ))}
+              </optgroup>
+            );
+          })}
+        </select>
+      </div>
 
       <div className={styles.ringWrapper}>
         <svg width={180} height={180} viewBox="0 0 180 180" className={styles.ring}>
