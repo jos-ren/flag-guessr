@@ -21,12 +21,21 @@ interface Props {
   onSelect: (country: Country) => void;
   onImgLoad: () => void;
   answerMode: 'multiple-choice' | 'text-input';
+  modeId: string;
   pool: Country[];
   guessHistory: GuessRecord[];
   lives: number;
   maxLives: number;
   elapsedSeconds: number;
   eliminatedOptions: string[];
+}
+
+function getPrompt(modeId: string, answerMode: 'multiple-choice' | 'text-input'): string {
+  if (answerMode === 'text-input') return 'Which team is this?';
+  if (modeId === 'capital-quiz') return 'What is the capital of this country?';
+  if (modeId === 'us-state-flags') return 'Which US state is this?';
+  if (modeId === 'ca-province-flags') return 'Which province or territory is this?';
+  return 'Which country is this?';
 }
 
 function getOptionState(country: Country, current: Country, selected: Country | null, eliminatedOptions: string[]): OptionState {
@@ -43,7 +52,7 @@ function formatTime(s: number): string {
 
 export default function GameScreen({
   current, streak, isRecord, options, selected, animKey,
-  imgLoaded, isLeaving, onSelect, onImgLoad, answerMode, pool, guessHistory, lives, maxLives, elapsedSeconds, eliminatedOptions,
+  imgLoaded, isLeaving, onSelect, onImgLoad, answerMode, modeId, pool, guessHistory, lives, maxLives, elapsedSeconds, eliminatedOptions,
 }: Props) {
   return (
     <div className={styles.container}>
@@ -78,7 +87,7 @@ export default function GameScreen({
       </div>
 
       <div className={`${styles.prompt}${isLeaving ? ` ${styles.promptLeaving}` : ''}`}>
-        {answerMode === 'text-input' ? 'Which team is this?' : 'Which country is this?'}
+        {getPrompt(modeId, answerMode)}
       </div>
 
       {answerMode === 'text-input' ? (

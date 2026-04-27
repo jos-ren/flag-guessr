@@ -75,6 +75,7 @@ const playRoute = createRoute({
         onSelect={game.handleSelect}
         onImgLoad={() => game.setImgLoaded(true)}
         answerMode={game.answerMode}
+        modeId={game.currentMode}
         pool={game.pool}
         guessHistory={game.guessHistory}
         lives={game.lives}
